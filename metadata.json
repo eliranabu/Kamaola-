@@ -1,0 +1,6 @@
+{
+  "name": "כמה זה עולה? | מעקב הוצאות וחיסכון",
+  "description": "אפליקציית פינטק לחישוב הוצאות סיגריות חודשיות ושנתיות, מעקב רכישות בזמן אמת וסימולציות חיסכון אישיות.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
