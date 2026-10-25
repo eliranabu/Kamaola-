@@ -7,6 +7,7 @@ import React, { useState, useEffect, useMemo, useCallback, Suspense, lazy } from
 import { Plus, Loader2 } from 'lucide-react';
 import { Purchase, UserSettings, ActiveTab, ToastNotification } from './types/index.ts';
 import { storage, LoadIssue } from './services/storage.ts';
+import { useNow } from './services/useNow.ts';
 import {
   calculateMonthlyStats,
   calculate12MonthsStats,
@@ -89,11 +90,16 @@ export default function App() {
     }
   };
 
-  // Toggle demo sandbox mode
+  // Toggle demo sandbox mode: only flips after the preference was actually persisted
   const handleToggleDemoMode = () => {
     const nextState = !isDemoActive;
+    const res = storage.saveSettings({ isDemoModeActive: nextState });
+    if (!res.success) {
+      showToast(res.error, 'error');
+      return;
+    }
+    setSettings(res.data);
     setIsDemoActive(nextState);
-    handleUpdateSettings({ isDemoModeActive: nextState });
     showToast(
       nextState ? 'מצב הדגמה הופעל (נתוני דוגמה בלבד)' : 'חזרת לנתוני הרכישות האמיתיים שלך',
       'info'
@@ -101,7 +107,7 @@ export default function App() {
   };
 
   // Central Calculation Single Source of Truth
-  const now = useMemo(() => new Date(), []);
+  const now = useNow();
   const currentYear = now.getFullYear();
   const currentMonth = now.getMonth() + 1; // 1-12
 
@@ -150,6 +156,7 @@ export default function App() {
       return result;
     }
     refreshData();
+    setSettings(storage.getSettings()); // remembered brand prices
     setEditingPurchase(null);
     showToast(isEdit ? 'הרכישה עודכנה בהצלחה' : 'הרכישה נוספה ונשמרה בהצלחה', 'success');
     return result;
@@ -169,15 +176,17 @@ export default function App() {
   };
 
   const handleResetConfirm = () => {
+    const result = isDemoActive ? storage.resetDemoData() : storage.resetAllUserData();
+    if (!result.success) {
+      showToast(result.error, 'error'); // keep the dialog open; nothing was reported as deleted
+      return;
+    }
+    refreshData();
+    setIsResetConfirmOpen(false);
     if (isDemoActive) {
-      storage.resetDemoData();
-      refreshData();
-      setIsResetConfirmOpen(false);
       showToast('נתוני ההדגמה אופסו בהצלחה', 'info');
     } else {
-      storage.resetAllUserData();
-      refreshData();
-      setIsResetConfirmOpen(false);
+      setSettings(storage.getSettings()); // back to defaults (goal, currency, remembered prices)
       setActiveTab('dashboard');
       showToast('כל הנתונים האישיים נמחקו בהצלחה', 'info');
     }

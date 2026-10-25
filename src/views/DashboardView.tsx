@@ -11,7 +11,13 @@ import {
   HelpCircle
 } from 'lucide-react';
 import { Purchase, UserSettings, MonthlySummary, YearlySummary, WeeklyGoalStats } from '../types/index.ts';
-import { compareMonthlyPaces, formatCurrency, formatCurrencyExact } from '../services/calculations.ts';
+import {
+  calculateSavingsBaseline,
+  calculateSavingsScenario,
+  compareMonthlyPaces,
+  formatCurrency,
+  formatCurrencyExact
+} from '../services/calculations.ts';
 import { ExpenseBarChart } from '../components/ExpenseBarChart.tsx';
 import { WeeklyGoalCard } from '../components/WeeklyGoalCard.tsx';
 
@@ -46,6 +52,10 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
 
   // Fair daily pace comparison (Apples-to-Apples based on daily average)
   const paceComp = compareMonthlyPaces(currentMonthStats, prevMonthStats);
+
+  // Same baseline + scenario math as the Savings screen (single source of truth)
+  const teaserBaseline = calculateSavingsBaseline(currentMonthStats, twelveMonthsData);
+  const teaserAnnualSaved = calculateSavingsScenario(teaserBaseline.amount, 25).annualSaved;
 
   return (
     <div className="space-y-6 pb-24 md:pb-8">
@@ -294,9 +304,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
             <div className="flex items-baseline justify-between">
               <span className="text-xs text-[#AAB4C5]">חיסכון שנתי צפוי:</span>
               <span className="text-2xl font-black text-[#00E676] font-mono tabular-nums">
-                {currentMonthStats.totalSpent > 0
-                  ? formatCurrency(Math.round(currentMonthStats.totalSpent * 0.25 * 12), settings.currency)
-                  : `0 ${settings.currency}`}
+                {formatCurrency(teaserAnnualSaved, settings.currency)}
               </span>
             </div>
             <button

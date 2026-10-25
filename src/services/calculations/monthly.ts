@@ -1,7 +1,7 @@
 /** Monthly statistics, pace comparison and 12-month series. */
 
 import { Purchase, MonthlySummary } from '../../types/index.ts';
-import { formatMonthNameHe, getDaysInMonth, findTrackingStart } from './dates.ts';
+import { formatMonthNameHe, getDaysInMonth, findTrackingStart, toIsoDate } from './dates.ts';
 
 export const MIN_DAYS_FOR_PROJECTION = 5;
 
@@ -33,8 +33,10 @@ export function calculateMonthlyStats(
   const isCurrentMonth =
     referenceDate.getFullYear() === targetYear && referenceDate.getMonth() + 1 === targetMonth;
 
+  // Purchases dated after the reference day have not happened yet and are not counted.
+  const refIso = toIsoDate(referenceDate);
   const monthPurchases = purchases.filter((p) => {
-    if (!p.date) return false;
+    if (!p.date || p.date > refIso) return false;
     const [pYear, pMonth] = p.date.split('-').map(Number);
     return pYear === targetYear && pMonth === targetMonth;
   });

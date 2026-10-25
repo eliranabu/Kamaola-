@@ -1,7 +1,7 @@
 /** Single-purchase math and validation (shared limits for form, storage and import). */
 
 import { ValidationResult } from '../../types/index.ts';
-import { isValidIsoDate } from './dates.ts';
+import { isValidIsoDate, toIsoDate } from './dates.ts';
 
 export const MAX_PRICE_PER_PACK = 500;
 export const MAX_QUANTITY = 500;
@@ -15,12 +15,15 @@ export function calculatePurchaseTotal(pricePerPack: number, quantity: number): 
 }
 
 /** Validates purchase fields before saving. */
-export function validatePurchaseData(data: {
-  brand?: string;
-  pricePerPack?: number;
-  quantity?: number;
-  date?: string;
-}): ValidationResult {
+export function validatePurchaseData(
+  data: {
+    brand?: string;
+    pricePerPack?: number;
+    quantity?: number;
+    date?: string;
+  },
+  today: string = toIsoDate(new Date())
+): ValidationResult {
   const errors: Record<string, string> = {};
 
   if (!data.brand || data.brand.trim().length === 0) {
@@ -45,6 +48,8 @@ export function validatePurchaseData(data: {
 
   if (!isValidIsoDate(data.date)) {
     errors.date = 'נא לבחור תאריך תקין';
+  } else if (data.date > today) {
+    errors.date = 'לא ניתן לתעד רכישה בתאריך עתידי';
   }
 
   return { isValid: Object.keys(errors).length === 0, errors };

@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { X, Check, Calendar, Clock, MapPin, FileText, ChevronDown, AlertCircle, Loader2 } from 'lucide-react';
 import { Purchase, UserSettings } from '../types/index.ts';
 import { POPULAR_ISRAELI_BRANDS } from '../services/storage.ts';
-import { calculatePurchaseTotal, validatePurchaseData, formatCurrency } from '../services/calculations.ts';
+import { calculatePurchaseTotal, validatePurchaseData, formatCurrency, MAX_PRICE_PER_PACK, MAX_QUANTITY } from '../services/calculations.ts';
 
 interface AddPurchaseModalProps {
   isOpen: boolean;
@@ -316,7 +316,7 @@ export const AddPurchaseModal: React.FC<AddPurchaseModalProps> = ({
                   inputMode="decimal"
                   step="0.5"
                   min="1"
-                  max="500"
+                  max={MAX_PRICE_PER_PACK}
                   value={pricePerPack}
                   onChange={(e) => {
                     setPricePerPack(e.target.value);
@@ -360,11 +360,11 @@ export const AddPurchaseModal: React.FC<AddPurchaseModalProps> = ({
                   type="number"
                   inputMode="numeric"
                   min="1"
-                  max="100"
+                  max={MAX_QUANTITY}
                   value={quantity}
                   onChange={(e) => {
                     const val = parseInt(e.target.value, 10);
-                    setQuantity(isNaN(val) ? 1 : Math.max(1, val));
+                    setQuantity(isNaN(val) ? 1 : Math.min(MAX_QUANTITY, Math.max(1, val)));
                     if (errors.quantity) setErrors((prev) => ({ ...prev, quantity: '' }));
                   }}
                   aria-invalid={!!errors.quantity}
@@ -375,7 +375,7 @@ export const AddPurchaseModal: React.FC<AddPurchaseModalProps> = ({
                 />
                 <button
                   type="button"
-                  onClick={() => setQuantity(quantity + 1)}
+                  onClick={() => setQuantity(Math.min(MAX_QUANTITY, quantity + 1))}
                   aria-label="הוספת חפיסה אחת"
                   className="w-11 h-11 bg-slate-800 hover:bg-slate-700 text-[#F5F7FA] text-lg font-bold rounded-xl flex items-center justify-center transition-colors min-h-[44px] min-w-[44px] focus-visible:ring-2 focus-visible:ring-[#00E676]"
                 >

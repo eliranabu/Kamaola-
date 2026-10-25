@@ -10,7 +10,7 @@ import {
   TrendingDown
 } from 'lucide-react';
 import { Purchase, UserSettings, MonthlySummary } from '../types/index.ts';
-import { calculateSavingsScenario, formatCurrency } from '../services/calculations.ts';
+import { calculateSavingsBaseline, calculateSavingsScenario, formatCurrency } from '../services/calculations.ts';
 
 interface SavingsViewProps {
   purchases: Purchase[];
@@ -27,28 +27,10 @@ export const SavingsView: React.FC<SavingsViewProps> = ({
   settings,
   onOpenAddModal
 }) => {
-  // Determine baseline monthly spending
-  const completedActiveMonths = twelveMonthsData.filter(
-    (m) => !m.isCurrentMonth && m.hasData && m.totalSpent > 0
+  const { amount: baselineMonthlySpend, explanation: baselineExplanation } = calculateSavingsBaseline(
+    currentMonthStats,
+    twelveMonthsData
   );
-  let baselineMonthlySpend = 0;
-  let baselineExplanation = '';
-
-  if (
-    currentMonthStats.projectionStatus === 'ready' &&
-    currentMonthStats.projectedTotal &&
-    currentMonthStats.projectedTotal > 0
-  ) {
-    baselineMonthlySpend = currentMonthStats.projectedTotal;
-    baselineExplanation = 'מחושב לפי תחזית החודש הנוכחי (מעל 5 ימי תיעוד)';
-  } else if (completedActiveMonths.length > 0) {
-    const total = completedActiveMonths.reduce((sum, m) => sum + m.totalSpent, 0);
-    baselineMonthlySpend = Math.round(total / completedActiveMonths.length);
-    baselineExplanation = 'מחושב לפי ממוצע חודשים קודמים שהסתיימו';
-  } else if (currentMonthStats.totalSpent > 0) {
-    baselineMonthlySpend = currentMonthStats.totalSpent;
-    baselineExplanation = 'מחושב לפי סך ההוצאה בפועל שנרשמה החודש';
-  }
 
   const [percentage, setPercentage] = useState<number>(25);
 

@@ -10,3 +10,4 @@ export * from './calculations/yearly.ts';
 export * from './calculations/savings.ts';
 export * from './calculations/weekly.ts';
 export * from './calculations/format.ts';
+export * from './calculations/baseline.ts';

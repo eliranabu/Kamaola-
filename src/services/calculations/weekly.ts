@@ -1,6 +1,7 @@
 /** Weekly pack-goal progress (Israeli week: Sunday-Saturday). */
 
 import { Purchase, WeeklyGoalStats } from '../../types/index.ts';
+import { toIsoDate } from './dates.ts';
 
 /**
  * Calculates current week's spending and progress against a weekly pack target.
@@ -32,9 +33,10 @@ export function calculateWeeklyStats(
 
   const startOfWeekStr = `${startOfWeek.getFullYear()}-${String(startOfWeek.getMonth() + 1).padStart(2, '0')}-${String(startOfWeek.getDate()).padStart(2, '0')}`;
 
+  const todayStr = toIsoDate(referenceDate);
   const weekPurchases = purchases.filter((p) => {
     if (!p.date) return false;
-    return p.date >= startOfWeekStr;
+    return p.date >= startOfWeekStr && p.date <= todayStr; // future-dated purchases are not counted
   });
 
   const currentWeekPacks = weekPurchases.reduce((sum, p) => sum + (p.quantity || 0), 0);

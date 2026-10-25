@@ -36,9 +36,9 @@ export function parseInsights(data: unknown): InsightsData | null {
   const tips = d.tips.filter((t): t is string => typeof t === 'string' && t.trim() !== '');
   if (tips.length === 0) return null;
   return {
-    summary: d.summary,
-    tips,
-    milestoneIdea: typeof d.milestoneIdea === 'string' ? d.milestoneIdea : ''
+    summary: d.summary.slice(0, 600),
+    tips: tips.slice(0, 5).map((t) => t.slice(0, 300)),
+    milestoneIdea: typeof d.milestoneIdea === 'string' ? d.milestoneIdea.slice(0, 300) : ''
   };
 }
 

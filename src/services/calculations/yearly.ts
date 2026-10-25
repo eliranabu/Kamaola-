@@ -13,8 +13,9 @@ export function calculateYearlyStats(
   targetYear: number,
   referenceDate: Date = new Date()
 ): YearlySummary {
+  const refIso = toIsoDate(referenceDate);
   const yearPurchases = purchases.filter((p) => {
-    if (!p.date) return false;
+    if (!p.date || p.date > refIso) return false; // future-dated purchases are not counted
     const [pYear] = p.date.split('-').map(Number);
     return pYear === targetYear;
   });

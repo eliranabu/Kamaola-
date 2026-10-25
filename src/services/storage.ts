@@ -7,7 +7,13 @@
 
 import { Purchase, UserSettings, StorageResult } from '../types/index.ts';
 import { calculatePurchaseTotal, validatePurchaseData } from './calculations.ts';
-import { DEMO_PURCHASES_KEY, USER_PURCHASES_KEY, USER_SETTINGS_KEY } from './storage/keys.ts';
+import {
+  DEMO_PURCHASES_KEY,
+  IMPORT_BACKUP_KEY,
+  USER_CORRUPT_KEY,
+  USER_PURCHASES_KEY,
+  USER_SETTINGS_KEY
+} from './storage/keys.ts';
 import { POPULAR_ISRAELI_BRANDS, SAMPLE_DEMO_PURCHASES } from './storage/demoData.ts';
 import { buildCsv } from './storage/csv.ts';
 import { parsePurchasesList } from './storage/normalize.ts';
@@ -239,11 +245,17 @@ export class StorageService {
     return { success: true, count: result.data.count };
   }
 
-  /** Clears real user data only. Demo sandbox is untouched. */
+  /**
+   * Clears real user data only (purchases, settings and the safety copies that contain
+   * purchase data - the user asked for a full delete). Demo sandbox is untouched.
+   */
   resetAllUserData(): StorageResult<void> {
     try {
       localStorage.removeItem(USER_PURCHASES_KEY);
       localStorage.removeItem(USER_SETTINGS_KEY);
+      localStorage.removeItem(USER_CORRUPT_KEY);
+      localStorage.removeItem(IMPORT_BACKUP_KEY);
+      this.loadIssue = null;
       return { success: true, data: undefined };
     } catch (e: any) {
       return { success: false, error: this.formatStorageError(e) };
