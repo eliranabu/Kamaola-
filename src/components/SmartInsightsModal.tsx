@@ -1,6 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Sparkles, X, Lightbulb, Target, Loader2 } from 'lucide-react';
 import { MonthlySummary, YearlySummary, UserSettings } from '../types/index.ts';
+import {
+  InsightsData,
+  buildFallbackInsights,
+  buildInsightsPayload,
+  fetchInsights
+} from '../services/insights.ts';
 
 interface SmartInsightsModalProps {
   isOpen: boolean;
@@ -10,11 +16,7 @@ interface SmartInsightsModalProps {
   settings: UserSettings;
 }
 
-interface InsightsData {
-  summary: string;
-  tips: string[];
-  milestoneIdea: string;
-}
+type Phase = 'consent' | 'loading' | 'done';
 
 export const SmartInsightsModal: React.FC<SmartInsightsModalProps> = ({
   isOpen,
@@ -23,67 +25,43 @@ export const SmartInsightsModal: React.FC<SmartInsightsModalProps> = ({
   yearlyStats,
   settings
 }) => {
-  const [loading, setLoading] = useState(false);
+  const [phase, setPhase] = useState<Phase>('consent');
   const [insights, setInsights] = useState<InsightsData | null>(null);
+  const [isFallback, setIsFallback] = useState(false);
+  const abortRef = useRef<AbortController | null>(null);
+  const payload = buildInsightsPayload(currentMonthStats, yearlyStats, settings.currency);
 
-  // Escape key listener
+  // Every opening starts at the consent step; nothing is sent before approval.
+  useEffect(() => {
+    if (isOpen) {
+      setPhase('consent');
+      setInsights(null);
+      setIsFallback(false);
+    } else {
+      abortRef.current?.abort();
+    }
+  }, [isOpen]);
+
   useEffect(() => {
     if (!isOpen) return;
-
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') {
-        onClose();
-      }
+      if (e.key === 'Escape') onClose();
     };
-
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [isOpen, onClose]);
 
-  useEffect(() => {
-    if (!isOpen) return;
-
-    let isMounted = true;
-    setLoading(true);
-
-    fetch('/api/insights', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        totalMonthlySpent: currentMonthStats.totalSpent,
-        totalPacks: currentMonthStats.totalPacks,
-        dailyAverage: currentMonthStats.dailyAverage,
-        projectedAnnual: yearlyStats.projectedYearTotal,
-        currency: settings.currency
-      })
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        if (isMounted) {
-          setInsights(data);
-          setLoading(false);
-        }
-      })
-      .catch((err) => {
-        console.error('Failed to load insights:', err);
-        if (isMounted) {
-          setInsights({
-            summary: `בכל חודש מוקצים כ־${currentMonthStats.totalSpent} ${settings.currency} להוצאות סיגריות. מעקב שוטף הוא הצעד המשמעותי ביותר להשגת שליטה תקציבית.`,
-            tips: [
-              'הגדירו תקציב שבועי מוגדר מראש במקום לקנות חפיסה בכל פעם שנזכרים.',
-              'הפנו כל חיסכון שבועי ישירות לחיסכון נפרד כדי לחוש בהצלחה.',
-              'בחנו את ימי השבוע שבהם אתם קונים הכי הרבה וזהו את הטריגרים.'
-            ],
-            milestoneIdea: 'צמצום של שליש מהחפיסות שווה ערך לכ־4,000 ₪ חיסכון שנתי ממוצע.'
-          });
-          setLoading(false);
-        }
-      });
-
-    return () => {
-      isMounted = false;
-    };
-  }, [isOpen, currentMonthStats, yearlyStats, settings]);
+  const handleApprove = async () => {
+    abortRef.current?.abort();
+    const controller = new AbortController();
+    abortRef.current = controller;
+    setPhase('loading');
+    const result = await fetchInsights(payload, controller.signal);
+    if (controller.signal.aborted) return;
+    setIsFallback(result === null);
+    setInsights(result ?? buildFallbackInsights(payload.totalMonthlySpent, payload.currency));
+    setPhase('done');
+  };
 
   if (!isOpen) return null;
 
@@ -126,14 +104,37 @@ export const SmartInsightsModal: React.FC<SmartInsightsModalProps> = ({
         </div>
 
         {/* Content */}
-        <div className="py-5 max-h-[70vh] overflow-y-auto" aria-busy={loading}>
-          {loading ? (
+        <div className="py-5 max-h-[70vh] overflow-y-auto" aria-busy={phase === 'loading'}>
+          {phase === 'consent' ? (
+            <div className="space-y-4">
+              <p className="text-sm text-[#F5F7FA] leading-relaxed">
+                כדי ליצור תובנות, <strong>סיכומי ההוצאה הבאים יישלחו לשרת האפליקציה ומשם לשירות הבינה המלאכותית Gemini של Google</strong>. הרכישות עצמן, התאריכים, המותגים וההערות שלכם לא נשלחים.
+              </p>
+              <ul className="bg-[#080C14] border border-slate-800 rounded-xl p-4 text-xs sm:text-sm text-[#AAB4C5] space-y-1.5">
+                <li>הוצאה החודש: <strong className="text-[#F5F7FA]">{Math.round(payload.totalMonthlySpent)} {payload.currency}</strong></li>
+                <li>חפיסות החודש: <strong className="text-[#F5F7FA]">{payload.totalPacks}</strong></li>
+                <li>ממוצע יומי: <strong className="text-[#F5F7FA]">{payload.dailyAverage} {payload.currency}</strong></li>
+                <li>אומדן שנתי: <strong className="text-[#F5F7FA]">{payload.projectedAnnual === null ? 'עדיין לא זמין' : `${payload.projectedAnnual} ${payload.currency}`}</strong></li>
+              </ul>
+              <button
+                onClick={handleApprove}
+                className="w-full py-3 bg-[#00E676] text-[#080C14] text-sm font-bold rounded-xl min-h-[48px] focus-visible:ring-2 focus-visible:ring-white"
+              >
+                אישור ושליחה
+              </button>
+            </div>
+          ) : phase === 'loading' ? (
             <div className="py-12 flex flex-col items-center justify-center gap-3" role="status">
               <Loader2 className="w-8 h-8 text-[#00E676] animate-spin" aria-hidden="true" />
               <span className="text-xs sm:text-sm text-[#AAB4C5]">מנתח את נתוני הרכישות שלך...</span>
             </div>
           ) : insights ? (
             <div className="space-y-4">
+              {isFallback && (
+                <p role="status" className="text-xs text-amber-200 bg-amber-500/10 border border-amber-500/30 rounded-xl p-3">
+                  שירות התובנות אינו זמין כרגע. מוצגות המלצות כלליות שלא מבוססות על ניתוח אישי.
+                </p>
+              )}
               {/* Summary */}
               <div className="bg-[#080C14] border border-[#00E676]/30 p-4 rounded-2xl">
                 <p className="text-sm font-semibold text-[#F5F7FA] leading-relaxed">

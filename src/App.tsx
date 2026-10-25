@@ -6,7 +6,7 @@
 import React, { useState, useEffect, useMemo, useCallback, Suspense, lazy } from 'react';
 import { Plus, Loader2 } from 'lucide-react';
 import { Purchase, UserSettings, ActiveTab, ToastNotification } from './types/index.ts';
-import { storage } from './services/storage.ts';
+import { storage, LoadIssue } from './services/storage.ts';
 import {
   calculateMonthlyStats,
   calculate12MonthsStats,
@@ -20,6 +20,7 @@ import { DeleteConfirmModal } from './components/DeleteConfirmModal.tsx';
 import { SmartInsightsModal } from './components/SmartInsightsModal.tsx';
 import { ToastContainer } from './components/Toast.tsx';
 import { PWAInstallBanner } from './components/PWAInstallBanner.tsx';
+import { DataRecoveryBanner } from './components/DataRecoveryBanner.tsx';
 import { DashboardView } from './views/DashboardView.tsx';
 
 // Code Splitting (Recommendation 2: React.lazy for secondary views to optimize bundle and initial load)
@@ -51,6 +52,7 @@ export default function App() {
   const [isResetConfirmOpen, setIsResetConfirmOpen] = useState(false);
   const [isInsightsOpen, setIsInsightsOpen] = useState(false);
   const [toasts, setToasts] = useState<ToastNotification[]>([]);
+  const [loadIssue, setLoadIssue] = useState<LoadIssue | null>(null);
 
   // Show accessible Toast feedback
   const showToast = useCallback((message: string, type: 'success' | 'error' | 'info' = 'info') => {
@@ -70,6 +72,7 @@ export default function App() {
   const refreshData = useCallback(() => {
     const list = storage.getPurchases(isDemoActive);
     setPurchases(list);
+    setLoadIssue(storage.getLoadIssue());
   }, [isDemoActive]);
 
   useEffect(() => {
@@ -205,6 +208,14 @@ export default function App() {
         onToggleDemoMode={handleToggleDemoMode}
         onOpenInsights={() => setIsInsightsOpen(true)}
       />
+
+      {loadIssue && (
+        <DataRecoveryBanner
+          issue={loadIssue}
+          backups={storage.getCorruptBackups(loadIssue.isDemo)}
+          onDismiss={() => setLoadIssue(null)}
+        />
+      )}
 
       {/* PWA In-App Install & Offline Connectivity Banner */}
       <PWAInstallBanner />

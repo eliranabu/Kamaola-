@@ -63,7 +63,8 @@ export interface YearlySummary {
   totalSpent: number;
   totalPacks: number;
   averagePricePerPack: number;
-  projectedYearTotal: number;
+  projectedYearTotal: number | null; // Null until enough tracked days exist
+  trackedDays: number; // Days counted from tracking start (current year only)
   hasData: boolean;
 }
 

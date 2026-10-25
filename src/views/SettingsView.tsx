@@ -1,7 +1,6 @@
-import React, { useRef, useState } from 'react';
+import React, { useState } from 'react';
 import {
   Download,
-  Upload,
   RotateCcw,
   FileSpreadsheet,
   FileCode,
@@ -13,6 +12,7 @@ import {
 } from 'lucide-react';
 import { UserSettings } from '../types/index.ts';
 import { storage } from '../services/storage.ts';
+import { ImportSection } from '../components/ImportSection.tsx';
 
 interface SettingsViewProps {
   settings: UserSettings;
@@ -33,7 +33,6 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
   onToggleDemoMode,
   onShowToast
 }) => {
-  const fileInputRef = useRef<HTMLInputElement>(null);
   const [importStatus, setImportStatus] = useState<{
     type: 'success' | 'error' | null;
     message: string;
@@ -87,30 +86,6 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
       setImportStatus({ type: 'error', message: 'שגיאה ביצירת קובץ גיבוי' });
       if (onShowToast) onShowToast('שגיאה ביצירת קובץ גיבוי', 'error');
     }
-  };
-
-  // JSON Import Trigger
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      const content = event.target?.result as string;
-      const result = storage.importFromJson(content);
-      if (result.success) {
-        const msg = `השחזור הושלם בהצלחה! יובאו ${result.count} רכישות תקינות.`;
-        setImportStatus({ type: 'success', message: msg });
-        if (onShowToast) onShowToast(msg, 'success');
-        onRefreshData();
-      } else {
-        const err = result.error || 'שגיאה בייבוא הקובץ. ודאו שמדובר בקובץ גיבוי תקין של האפליקציה.';
-        setImportStatus({ type: 'error', message: err });
-        if (onShowToast) onShowToast(err, 'error');
-      }
-    };
-    reader.readAsText(file);
-    if (fileInputRef.current) fileInputRef.current.value = '';
   };
 
   return (
@@ -176,7 +151,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
 
         <div className="bg-[#080C14] border border-slate-800 p-4 rounded-xl text-xs text-[#AAB4C5] space-y-2.5 leading-relaxed">
           <p>
-            <strong className="text-[#F5F7FA]">איפה הנתונים נשמרים?</strong> הרכישות וההגדרות שלך נשמרות אך ורק בזיכרון המקומי של הדפדפן במכשיר זה (Local Storage). שום מידע כספי אינו נשלח לשרת חיצוני.
+            <strong className="text-[#F5F7FA]">איפה הנתונים נשמרים?</strong> הרכישות וההגדרות שלך נשמרות אך ורק בזיכרון המקומי של הדפדפן במכשיר זה (Local Storage). שום מידע כספי אינו נשלח אוטומטית. הפיצ׳ר האופציונלי „תובנות חכמות” שולח סיכומים (לא רכישות בודדות) לשירות חיצוני (Gemini) רק לאחר אישור מפורש שלכם בכל פתיחה.
           </p>
           <p>
             <strong className="text-[#F5F7FA]">סנכרון בין מכשירים:</strong> בגרסה זו, הנתונים <em>אינם</em> מסתנכרנים אוטומטית בין טלפונים או מחשבים שונים.
@@ -245,29 +220,15 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
             </span>
           </button>
 
-          {/* JSON Import */}
-          <div>
-            <input
-              type="file"
-              ref={fileInputRef}
-              accept=".json"
-              onChange={handleFileChange}
-              aria-label="בחירת קובץ גיבוי JSON לשחזור"
-              className="hidden"
-            />
-            <button
-              onClick={() => fileInputRef.current?.click()}
-              className="w-full h-full p-4 bg-[#080C14] hover:bg-[#182542] border border-slate-800 hover:border-slate-700 rounded-xl text-right transition-all min-h-[48px] flex flex-col justify-between focus-visible:ring-2 focus-visible:ring-[#00E676]"
-            >
-              <div className="flex items-center justify-between w-full">
-                <span className="text-xs sm:text-sm font-bold text-[#F5F7FA]">שחזור מגיבוי JSON</span>
-                <Upload className="w-5 h-5 text-purple-400" aria-hidden="true" />
-              </div>
-              <span className="text-xs text-[#AAB4C5] mt-2 block leading-relaxed">
-                טעינת נתונים שנשמרו מקובץ גיבוי קיים
-              </span>
-            </button>
-          </div>
+          {/* JSON Import (preview, confirmation, backup, undo) */}
+          <ImportSection
+            isDemoActive={isDemoActive}
+            onRefreshData={onRefreshData}
+            onStatus={(type, message) => {
+              setImportStatus({ type, message });
+              if (onShowToast) onShowToast(message, type);
+            }}
+          />
         </div>
       </section>
 

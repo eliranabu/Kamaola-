@@ -172,7 +172,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
               {formatCurrencyExact(currentMonthStats.dailyAverage, settings.currency)}
             </div>
             <div className="mt-2 text-xs text-[#AAB4C5]">
-              לפי {currentMonthStats.daysConsidered} ימים שעברו החודש
+              לפי {currentMonthStats.daysConsidered} ימי מעקב החודש
             </div>
           </div>
         </div>
@@ -267,7 +267,9 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
             <div className="bg-[#080C14] p-3 rounded-xl border border-slate-800">
               <span className="text-xs text-amber-300 block font-semibold">אומדן שנתי מוערך</span>
               <span className="text-lg sm:text-xl font-bold text-amber-300 font-mono tabular-nums mt-0.5 block">
-                ~{formatCurrency(yearlyStats.projectedYearTotal, settings.currency)}
+                {yearlyStats.projectedYearTotal === null
+                  ? 'מתגבש'
+                  : `~${formatCurrency(yearlyStats.projectedYearTotal, settings.currency)}`}
               </span>
             </div>
           </div>

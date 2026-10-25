@@ -436,7 +436,7 @@ assert(
 );
 
 // 38. מספר רכישות לאורך מספר ימים ביום 15
-const pMulti1: Purchase = { id: 'm-1', brand: 'Kent', pricePerPack: 40, quantity: 1, totalPrice: 40, date: '2026-10-02', createdAt: 1 };
+const pMulti1: Purchase = { id: 'm-1', brand: 'Kent', pricePerPack: 40, quantity: 1, totalPrice: 40, date: '2026-10-01', createdAt: 1 };
 const pMulti2: Purchase = { id: 'm-2', brand: 'Kent', pricePerPack: 40, quantity: 1, totalPrice: 40, date: '2026-10-06', createdAt: 2 };
 const pMulti3: Purchase = { id: 'm-3', brand: 'Kent', pricePerPack: 40, quantity: 1, totalPrice: 40, date: '2026-10-10', createdAt: 3 };
 const day15Date = new Date(2026, 9, 15); // Day 15
@@ -450,7 +450,7 @@ assert(
 
 // 39. חודש קצר (פברואר 28 ימים) מחושב במדויק
 const feb2026Date = new Date(2026, 1, 14); // Feb 14, 2026 (Common year, 28 days)
-const pFeb: Purchase = { id: 'feb-1', brand: 'Next', pricePerPack: 35, quantity: 2, totalPrice: 70, date: '2026-02-05', createdAt: 1 };
+const pFeb: Purchase = { id: 'feb-1', brand: 'Next', pricePerPack: 35, quantity: 2, totalPrice: 70, date: '2026-02-01', createdAt: 1 };
 // 70 ₪ over 14 days = 5 ₪/day -> in 28 days = 140 ₪
 const febProjection = calculateMonthlyStats([pFeb], 2026, 2, feb2026Date);
 assert(
