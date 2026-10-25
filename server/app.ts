@@ -64,6 +64,8 @@ export function createApp(options: AppOptions = {}) {
   app.all('/api/*', (_req, res) => res.status(404).json({ error: 'not_found' }));
 
   // JSON body errors (too large / malformed) -> JSON responses with correct status
+  // Express recognises error handlers by their 4-argument signature, so `_next` must stay.
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   app.use('/api', (err: any, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
     const status = err?.type === 'entity.too.large' ? 413 : err?.status && err.status < 500 ? err.status : 500;
     res.status(status).json({ error: status === 413 ? 'payload_too_large' : 'bad_request' });

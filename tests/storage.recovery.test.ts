@@ -15,7 +15,7 @@ const truncated = '[{"id":"x","brand":"A","pricePerPack":39,"quantity":1,"totalP
 ls.store[USER_PURCHASES_KEY] = truncated;
 check('invalid JSON reads as empty list without throwing', s.getPurchases(false).length === 0);
 check('load issue reports invalid_json with a saved backup', s.getLoadIssue()?.reason === 'invalid_json' && s.getLoadIssue()?.backupSaved === true);
-const save = s.savePurchase({ brand: 'New', pricePerPack: 40, quantity: 1, date: '2026-10-02' });
+const save = s.savePurchase({ brand: 'New', pricePerPack: 40, quantity: 1, date: '2020-01-02' });
 const backups = s.getCorruptBackups(false);
 check('save succeeds AND the original corrupt raw string is still recoverable', save.success && backups.some((b) => b.raw === truncated));
 check('corrupt backup is not duplicated on repeated reads', (s.getPurchases(false), s.getPurchases(false), s.getCorruptBackups(false).length === 1));

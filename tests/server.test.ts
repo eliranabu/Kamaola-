@@ -21,7 +21,7 @@ const post = (url: string, body: unknown, raw = false) =>
 
 const originalError = console.error;
 console.error = () => {};
-let prompts: string[] = [];
+const prompts: string[] = [];
 const ok: GenerateFn = async (p) => { prompts.push(p); return goodAnswer; };
 
 await withServer({ generate: ok }, async (url) => {

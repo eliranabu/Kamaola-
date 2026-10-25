@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Download, Share, PlusSquare, X, WifiOff } from 'lucide-react';
+import { Download, Share, X, WifiOff } from 'lucide-react';
 import { usePWAInstall } from '../services/usePWAInstall.ts';
 import { useOnlineStatus } from '../services/useOnlineStatus.ts';
 

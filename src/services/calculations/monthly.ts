@@ -54,10 +54,10 @@ export function calculateMonthlyStats(
   const firstTrackedDay = startsThisMonth ? Number(trackingStart!.slice(8, 10)) : 1;
 
   let daysConsidered: number;
-  let dailyAverage = 0;
+  let dailyAverage: number;
   let projectedTotal: number | null = null;
   let projectionStatus: MonthlySummary['projectionStatus'] = 'past_month';
-  let projectionMessage = '';
+  let projectionMessage: string;
 
   if (isCurrentMonth) {
     daysConsidered = Math.max(1, referenceDate.getDate() - firstTrackedDay + 1);

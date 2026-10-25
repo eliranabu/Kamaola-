@@ -13,20 +13,14 @@ import {
   validatePurchaseData,
   getDaysInMonth,
   calculateMonthlyStats,
-  calculateYearlyStats,
   calculateSavingsScenario,
   formatCurrencyExact,
   compareMonthlyPaces,
-  MIN_DAYS_FOR_PROJECTION,
   calculateWeeklyStats
 } from './calculations.ts';
 import {
   StorageService,
-  sanitizeCsvField,
-  USER_PURCHASES_KEY,
-  USER_SETTINGS_KEY,
-  DEMO_PURCHASES_KEY,
-  SAMPLE_DEMO_PURCHASES
+  sanitizeCsvField
 } from './storage.ts';
 import { Purchase } from '../types/index.ts';
 
@@ -143,9 +137,8 @@ const statsStrict = calculateMonthlyStats(strictlyUserPurchases, 2026, 10, refDa
 assert(5, 'Demo data tagged with isDemo:true is excluded from real calculations', statsStrict.totalSpent === 40);
 
 // 6. מחיקת נתוני הדגמה אינה מוחקת רכישות אמיתיות.
-let userStore = [p1, p2];
-let demoStore = [demoPurchase];
-demoStore = [];
+const userStore = [p1, p2];
+const demoStore: Purchase[] = [];
 assert(6, 'Clearing demo store leaves user store completely untouched', userStore.length === 2 && demoStore.length === 0);
 
 // 7. משתמש חדש אינו מקבל רכישות מומצאות.
@@ -200,8 +193,8 @@ assert(15, 'Savings simulations: 1200 ₪ at 50% = 600 ₪/mo; 100% = 1200 ₪/m
 
 // 16. איפוס נתוני הדגמה שומר על הרכישות האמיתיות ללא שינוי
 mockLocalStorage.clear();
-testStorage.savePurchase({ brand: 'Real Marlboro', pricePerPack: 40, quantity: 2, date: '2026-10-10' }, false);
-testStorage.savePurchase({ brand: 'Demo Marlboro', pricePerPack: 40, quantity: 5, date: '2026-10-10' }, true);
+testStorage.savePurchase({ brand: 'Real Marlboro', pricePerPack: 40, quantity: 2, date: '2020-01-15' }, false);
+testStorage.savePurchase({ brand: 'Demo Marlboro', pricePerPack: 40, quantity: 5, date: '2020-01-15' }, true);
 
 const realBeforeDemoReset = testStorage.getPurchases(false);
 const resetDemoRes = testStorage.resetDemoData();
@@ -245,7 +238,7 @@ assert(
 
 // 19. טיפול בשגיאת QuotaExceededError ב-savePurchase מחזיר StorageResult עם שגיאה בעברית ולא קורס
 shouldSimulateQuotaError = true;
-const quotaFailResult = testStorage.savePurchase({ brand: 'Marlboro', pricePerPack: 40, quantity: 1, date: '2026-10-10' }, false);
+const quotaFailResult = testStorage.savePurchase({ brand: 'Marlboro', pricePerPack: 40, quantity: 1, date: '2020-01-15' }, false);
 shouldSimulateQuotaError = false;
 
 assert(
@@ -266,10 +259,10 @@ assert(
 );
 
 // 21. כשל בשמירה אינו משנה את רשימת הרכישות הקיימת
-testStorage.savePurchase({ brand: 'Valid Item', pricePerPack: 35, quantity: 1, date: '2026-10-11' }, false);
+testStorage.savePurchase({ brand: 'Valid Item', pricePerPack: 35, quantity: 1, date: '2020-01-15' }, false);
 const countBeforeFail = testStorage.getPurchases(false).length;
 shouldSimulateQuotaError = true;
-testStorage.savePurchase({ brand: 'Failed Item', pricePerPack: 35, quantity: 1, date: '2026-10-12' }, false);
+testStorage.savePurchase({ brand: 'Failed Item', pricePerPack: 35, quantity: 1, date: '2020-01-15' }, false);
 shouldSimulateQuotaError = false;
 const countAfterFail = testStorage.getPurchases(false).length;
 
@@ -353,15 +346,15 @@ assert(26, 'CSV injection: =1+1 is neutralized with prepended quote', csvEq === 
 
 // 27. נטרול נוסחת +SUM(A1:A2)
 const csvPlus = sanitizeCsvField('+SUM(A1:A2)', false);
-assert(27, 'CSV injection: +SUM(A1:A2) is neutralized with prepended quote', csvPlus === `\"'+SUM(A1:A2)\"`);
+assert(27, 'CSV injection: +SUM(A1:A2) is neutralized with prepended quote', csvPlus === `"'+SUM(A1:A2)"`);
 
 // 28. נטרול נוסחת -1+2 בשדה טקסט
 const csvMinus = sanitizeCsvField('-1+2', false);
-assert(28, 'CSV injection: -1+2 in text field is neutralized with prepended quote', csvMinus === `\"'-1+2\"`);
+assert(28, 'CSV injection: -1+2 in text field is neutralized with prepended quote', csvMinus === `"'-1+2"`);
 
 // 29. נטרול נוסחת @SUM(A1)
 const csvAt = sanitizeCsvField('@SUM(A1)', false);
-assert(29, 'CSV injection: @SUM(A1) is neutralized with prepended quote', csvAt === `\"'@SUM(A1)\"`);
+assert(29, 'CSV injection: @SUM(A1) is neutralized with prepended quote', csvAt === `"'@SUM(A1)"`);
 
 // 30. נוסחה עם רווחים מובילים מנוטרלת כראוי
 const csvLeadingSpaces = sanitizeCsvField('   =cmd|/C', false);

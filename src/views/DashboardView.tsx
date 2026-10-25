@@ -7,8 +7,7 @@ import {
   ArrowUpRight,
   ArrowDownRight,
   Plus,
-  Receipt,
-  HelpCircle
+  Receipt
 } from 'lucide-react';
 import { Purchase, UserSettings, MonthlySummary, YearlySummary, WeeklyGoalStats } from '../types/index.ts';
 import {

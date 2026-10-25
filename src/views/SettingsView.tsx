@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import {
-  Download,
   RotateCcw,
   FileSpreadsheet,
   FileCode,
@@ -57,7 +56,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
       if (onShowToast) {
         onShowToast('קובץ Excel / CSV הורד בהצלחה', 'success');
       }
-    } catch (e: any) {
+    } catch {
       setImportStatus({ type: 'error', message: 'שגיאה בייצוא קובץ CSV' });
       if (onShowToast) onShowToast('שגיאה בייצוא קובץ CSV', 'error');
     }
@@ -82,7 +81,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
       if (onShowToast) {
         onShowToast('קובץ גיבוי JSON הורד בהצלחה', 'success');
       }
-    } catch (e: any) {
+    } catch {
       setImportStatus({ type: 'error', message: 'שגיאה ביצירת קובץ גיבוי' });
       if (onShowToast) onShowToast('שגיאה ביצירת קובץ גיבוי', 'error');
     }

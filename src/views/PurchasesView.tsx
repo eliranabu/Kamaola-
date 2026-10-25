@@ -93,7 +93,6 @@ export const PurchasesView: React.FC<PurchasesViewProps> = ({
     };
   }, [filteredPurchases]);
 
-  const hasActiveFilters = searchQuery.trim().length > 0 || selectedMonth !== 'all' || selectedBrand !== 'all';
 
   const formatMonthLabel = (key: string) => {
     const [y, m] = key.split('-').map(Number);

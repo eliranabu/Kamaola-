@@ -14,7 +14,7 @@ import {
   USER_PURCHASES_KEY,
   USER_SETTINGS_KEY
 } from './storage/keys.ts';
-import { POPULAR_ISRAELI_BRANDS, SAMPLE_DEMO_PURCHASES } from './storage/demoData.ts';
+import { SAMPLE_DEMO_PURCHASES } from './storage/demoData.ts';
 import { buildCsv } from './storage/csv.ts';
 import { parsePurchasesList } from './storage/normalize.ts';
 import {

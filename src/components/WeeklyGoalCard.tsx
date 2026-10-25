@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
-import { Target, CheckCircle2, AlertCircle, Edit3, Trophy, ChevronLeft } from 'lucide-react';
+import { Target, AlertCircle, Edit3, Trophy } from 'lucide-react';
 import { WeeklyGoalStats, UserSettings } from '../types/index.ts';
-import { formatCurrency } from '../services/calculations.ts';
 
 interface WeeklyGoalCardProps {
   stats: WeeklyGoalStats;
@@ -11,7 +10,6 @@ interface WeeklyGoalCardProps {
 
 export const WeeklyGoalCard: React.FC<WeeklyGoalCardProps> = ({
   stats,
-  settings,
   onUpdateGoal
 }) => {
   const [isEditing, setIsEditing] = useState(false);

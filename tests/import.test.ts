@@ -6,7 +6,7 @@ import { MAX_IMPORT_CHARS } from '../src/services/storage/transfer.ts';
 
 const ls = installLocalStorage();
 const rec = (id: string, over: Record<string, unknown> = {}) => ({
-  id, brand: 'Kent', pricePerPack: 40, quantity: 1, totalPrice: 40, date: '2026-10-01', createdAt: 1, ...over
+  id, brand: 'Kent', pricePerPack: 40, quantity: 1, totalPrice: 40, date: '2020-10-01', createdAt: 1, ...over
 });
 const file = (items: unknown[]) => JSON.stringify({ purchases: items });
 
@@ -24,7 +24,7 @@ const pv = s.previewImport(file([rec('n1'), rec('n2')]));
 check('preview reports counts and writes nothing', pv.success && pv.newCount === 2 && pv.existingCount === 1 && ls.store[USER_PURCHASES_KEY] === before && !(IMPORT_BACKUP_KEY in ls.store));
 
 // Merge keeps existing records.
-let res = s.applyImport(pv.purchases, 'merge');
+const res = s.applyImport(pv.purchases, 'merge');
 check('merge keeps the existing record and adds the new ones', res.success && s.getPurchases(false).map((p) => p.id).sort().join() === 'keep,n1,n2');
 check('merge creates an automatic backup', IMPORT_BACKUP_KEY in ls.store);
 

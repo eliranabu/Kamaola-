@@ -9,9 +9,10 @@
     "preview": "vite preview",
     "start": "NODE_ENV=production node dist-server/server.mjs",
     "clean": "node -e \"for (const d of ['dist','dist-server']) require('fs').rmSync(d,{recursive:true,force:true})\"",
-    "lint": "tsc --noEmit",
+    "lint": "tsc --noEmit && eslint .",
     "test": "tsx src/services/calculations.test.ts && tsx tests/storage.recovery.test.ts && tsx tests/import.test.ts && tsx tests/projections.test.ts && tsx tests/insights.test.ts && tsx tests/consistency.test.ts && tsx tests/lifecycle.test.ts && tsx tests/server.test.ts",
-    "build:client": "vite build"
+    "build:client": "vite build",
+    "test:e2e": "playwright test"
   },
   "dependencies": {
     "@google/genai": "^2.4.0",
@@ -26,16 +27,25 @@
     "motion": "^12.23.24"
   },
   "devDependencies": {
+    "@axe-core/playwright": "^4.14.0",
+    "@eslint/js": "^10.0.1",
+    "@playwright/test": "1.63.0",
     "@types/express": "^4.17.21",
     "@types/node": "^22.14.0",
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
     "autoprefixer": "^10.4.21",
     "esbuild": "^0.25.0",
+    "eslint": "^10.13.0",
+    "eslint-plugin-jsx-a11y": "^6.10.2",
+    "eslint-plugin-react-hooks": "^7.1.1",
+    "globals": "^17.13.0",
     "sharp": "^0.35.5",
     "tailwindcss": "^4.3.3",
     "tsx": "^4.21.0",
-    "typescript": "^7.0.2",
-    "vite-plugin-pwa": "^2.0.0"
+    "typescript": "npm:@typescript/typescript6@6.0.2",
+    "typescript-eslint": "^8.72.0",
+    "vite-plugin-pwa": "^2.0.0",
+    "typescript7": "npm:typescript@7.0.2"
   }
 }

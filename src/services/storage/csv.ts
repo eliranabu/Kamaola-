@@ -24,6 +24,7 @@ export function sanitizeCsvField(value: any, isNumericField: boolean = false): s
 
   // Check if string begins with dangerous Excel formula triggers (=, +, -, @)
   // Ignoring leading spaces and control characters (ASCII 0-31)
+  // eslint-disable-next-line no-control-regex -- control characters are exactly what must be skipped here
   const trimmed = text.replace(/^[\s\x00-\x1f]+/, '');
   if (/^[=+\-@]/.test(trimmed)) {
     // Prepend single quote ' so spreadsheet apps treat it strictly as literal text

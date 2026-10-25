@@ -43,8 +43,8 @@ export function calculateWeeklyStats(
   const currentWeekSpent = weekPurchases.reduce((sum, p) => sum + (p.totalPrice || 0), 0);
   const percentUsed = Math.round((currentWeekPacks / weeklyPackGoal) * 100);
 
-  let status: 'on_track' | 'near_limit' | 'exceeded' = 'on_track';
-  let statusMessage = '';
+  let status: 'on_track' | 'near_limit' | 'exceeded';
+  let statusMessage: string;
 
   if (currentWeekPacks > weeklyPackGoal) {
     status = 'exceeded';

@@ -107,6 +107,7 @@ export const ImportSection: React.FC<ImportSectionProps> = ({ isDemoActive, onRe
             </fieldset>
             <p className="text-xs text-[#AAB4C5]">לפני השינוי נשמר גיבוי אוטומטי, ואפשר לבטל את הייבוא.</p>
             <div className="flex gap-3">
+              {/* eslint-disable-next-line jsx-a11y/no-autofocus -- safest default in a destructive dialog; replaced by Modal focus management */}
               <button autoFocus onClick={() => setPreview(null)} className="flex-1 py-3 bg-slate-800 text-[#F5F7FA] text-sm font-semibold rounded-xl min-h-[48px]">ביטול</button>
               <button onClick={confirm} className="flex-1 py-3 bg-[#00E676] text-[#080C14] text-sm font-bold rounded-xl min-h-[48px]">
                 {mode === 'merge' ? 'מזג רכישות' : 'החלף את כל הנתונים'}

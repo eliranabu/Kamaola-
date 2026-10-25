@@ -6,8 +6,7 @@ import {
   Smartphone,
   Coins,
   Plus,
-  HelpCircle,
-  TrendingDown
+  HelpCircle
 } from 'lucide-react';
 import { Purchase, UserSettings, MonthlySummary } from '../types/index.ts';
 import { calculateSavingsBaseline, calculateSavingsScenario, formatCurrency } from '../services/calculations.ts';
