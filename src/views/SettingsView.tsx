@@ -6,16 +6,12 @@ import {
   AlertTriangle,
   CheckCircle2,
   Eye,
-  Database,
-  Coins
+  Database
 } from 'lucide-react';
-import { UserSettings } from '../types/index.ts';
 import { storage } from '../services/storage.ts';
 import { ImportSection } from '../components/ImportSection.tsx';
 
 interface SettingsViewProps {
-  settings: UserSettings;
-  onUpdateSettings: (partial: Partial<UserSettings>) => void;
   onResetAllData: () => void;
   onRefreshData: () => void;
   isDemoActive: boolean;
@@ -24,8 +20,6 @@ interface SettingsViewProps {
 }
 
 export const SettingsView: React.FC<SettingsViewProps> = ({
-  settings,
-  onUpdateSettings,
   onResetAllData,
   onRefreshData,
   isDemoActive,
@@ -95,48 +89,8 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
           הגדרות וניהול נתונים
         </h1>
         <p className="text-xs text-[#AAB4C5] mt-0.5">
-          התאמת מטבע, שמירת גיבויים מקומיים, שחזור והגנה על הפרטיות שלך
+          שמירת גיבויים מקומיים, שחזור והגנה על הפרטיות שלך
         </p>
-      </section>
-
-      {/* Currency Preferences */}
-      <section aria-labelledby="currency-heading" className="bg-[#141E34] border border-slate-800 rounded-2xl p-4 sm:p-5 shadow-lg">
-        <div className="flex items-center gap-2 mb-2">
-          <Coins className="w-4 h-4 text-[#00E676]" aria-hidden="true" />
-          <h2 id="currency-heading" className="text-sm sm:text-base font-bold text-[#F5F7FA]">
-            מטבע ראשי
-          </h2>
-        </div>
-        <p className="text-xs text-[#AAB4C5] mb-4">
-          סמל המטבע שיוצג בכל המסכים, הגרפים והדוחות באפליקציה
-        </p>
-        <div className="grid grid-cols-3 gap-3 max-w-sm">
-          {[
-            { id: '₪', label: 'שקל (₪)' },
-            { id: '$', label: 'דולר ($)' },
-            { id: '€', label: 'אירו (€)' }
-          ].map((curr) => {
-            const isSelected = settings.currency === curr.id;
-            return (
-              <button
-                key={curr.id}
-                onClick={() => {
-                  onUpdateSettings({ currency: curr.id as any });
-                  if (onShowToast) onShowToast(`המטבע עודכן ל-${curr.label}`, 'info');
-                }}
-                aria-pressed={isSelected}
-                className={`py-3 px-3 rounded-xl border text-center transition-all min-h-[48px] focus-visible:ring-2 focus-visible:ring-[#00E676] ${
-                  isSelected
-                    ? 'bg-[#00E676]/15 border-[#00E676] text-[#00E676] font-bold shadow-sm'
-                    : 'bg-[#080C14] border-slate-800 text-[#AAB4C5] hover:text-[#F5F7FA]'
-                }`}
-              >
-                <div className="text-lg font-black font-mono">{curr.id}</div>
-                <div className="text-xs mt-0.5 font-medium">{curr.label}</div>
-              </button>
-            );
-          })}
-        </div>
       </section>
 
       {/* Local Storage & Privacy Notice */}

@@ -10,7 +10,7 @@
     "start": "NODE_ENV=production node dist-server/server.mjs",
     "clean": "node -e \"for (const d of ['dist','dist-server']) require('fs').rmSync(d,{recursive:true,force:true})\"",
     "lint": "tsc --noEmit && eslint .",
-    "test": "tsx src/services/calculations.test.ts && tsx tests/storage.recovery.test.ts && tsx tests/import.test.ts && tsx tests/projections.test.ts && tsx tests/insights.test.ts && tsx tests/consistency.test.ts && tsx tests/lifecycle.test.ts && tsx tests/server.test.ts",
+    "test": "tsx src/services/calculations.test.ts && tsx tests/storage.recovery.test.ts && tsx tests/import.test.ts && tsx tests/projections.test.ts && tsx tests/insights.test.ts && tsx tests/consistency.test.ts && tsx tests/lifecycle.test.ts && tsx tests/server.test.ts && tsx tests/currency.test.ts",
     "build:client": "vite build",
     "test:e2e": "playwright test"
   },

@@ -110,7 +110,7 @@ export const ExpenseBarChart: React.FC<ExpenseBarChartProps> = ({
                     {m.monthNameHe} {m.isCurrentMonth ? '(חודש נוכחי)' : ''}
                   </td>
                   <td className="py-2 px-3 text-[#00E676]">
-                    {m.hasData ? formatCurrency(m.totalSpent, settings.currency) : '0 ₪'}
+                    {formatCurrency(m.hasData ? m.totalSpent : 0, settings.currency)}
                   </td>
                   <td className="py-2 px-3">{m.totalPacks}</td>
                   <td className="py-2 px-3">{m.purchaseCount}</td>

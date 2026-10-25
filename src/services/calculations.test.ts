@@ -249,7 +249,7 @@ assert(
 
 // 20. טיפול בשגיאת SecurityError ב-saveSettings אינו קורס ומחזיר שגיאה מסודרת
 shouldSimulateSecurityError = true;
-const securityFailResult = testStorage.saveSettings({ currency: '$' });
+const securityFailResult = testStorage.saveSettings({ weeklyPackGoal: 3 });
 shouldSimulateSecurityError = false;
 
 assert(

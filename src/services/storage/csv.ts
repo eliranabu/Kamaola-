@@ -36,13 +36,15 @@ export function sanitizeCsvField(value: any, isNumericField: boolean = false): s
   return `"${escaped}"`;
 }
 
+import { CURRENCY_SYMBOL } from '../calculations/format.ts';
+
 const CSV_HEADERS = [
   'תאריך',
   'שעה',
   'מותג',
-  'מחיר לחפיסה (₪)',
+  `מחיר לחפיסה (${CURRENCY_SYMBOL})`,
   'מספר חפיסות',
-  'סך הכל (₪)',
+  `סך הכל (${CURRENCY_SYMBOL})`,
   'מקום רכישה',
   'הערה'
 ];

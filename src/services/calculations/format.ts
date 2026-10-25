@@ -1,7 +1,9 @@
-/** Currency formatting helpers. */
+/** Currency formatting helpers. The product is Israeli: the shekel is the only currency. */
+
+export const CURRENCY_SYMBOL = '₪' as const;
 
 /** Formats a number to whole currency units. */
-export function formatCurrency(amount: number, currency: string = '₪'): string {
+export function formatCurrency(amount: number, currency: string = CURRENCY_SYMBOL): string {
   if (isNaN(amount) || amount === null || amount === undefined) {
     return `0 ${currency}`;
   }
@@ -10,7 +12,7 @@ export function formatCurrency(amount: number, currency: string = '₪'): string
 }
 
 /** Formats currency with optional agorot / decimals for precise price per pack. */
-export function formatCurrencyExact(amount: number, currency: string = '₪'): string {
+export function formatCurrencyExact(amount: number, currency: string = CURRENCY_SYMBOL): string {
   if (isNaN(amount) || amount === null || amount === undefined) {
     return `0.00 ${currency}`;
   }

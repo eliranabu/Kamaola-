@@ -6,7 +6,7 @@
  */
 
 import { Purchase, UserSettings, StorageResult } from '../types/index.ts';
-import { calculatePurchaseTotal, validatePurchaseData } from './calculations.ts';
+import { CURRENCY_SYMBOL, calculatePurchaseTotal, validatePurchaseData } from './calculations.ts';
 import {
   DEMO_PURCHASES_KEY,
   IMPORT_BACKUP_KEY,
@@ -32,7 +32,7 @@ export { POPULAR_ISRAELI_BRANDS, SAMPLE_DEMO_PURCHASES } from './storage/demoDat
 export { sanitizeCsvField } from './storage/csv.ts';
 
 const DEFAULT_SETTINGS: UserSettings = {
-  currency: '₪',
+  currency: CURRENCY_SYMBOL,
   isDemoModeActive: false,
   lastBrandPrices: {
     'מרלבורו אדום (Marlboro Red)': 39,
@@ -173,7 +173,8 @@ export class StorageService {
     try {
       const raw = localStorage.getItem(USER_SETTINGS_KEY);
       if (!raw) return { ...DEFAULT_SETTINGS };
-      return { ...DEFAULT_SETTINGS, ...JSON.parse(raw) };
+      // Older versions allowed $/€ (display-only, never converted) - always normalise to the shekel
+      return { ...DEFAULT_SETTINGS, ...JSON.parse(raw), currency: CURRENCY_SYMBOL };
     } catch (e) {
       console.error('Error loading user settings:', e);
       return { ...DEFAULT_SETTINGS };
@@ -182,7 +183,7 @@ export class StorageService {
 
   saveSettings(partial: Partial<UserSettings>): StorageResult<UserSettings> {
     try {
-      const updated = { ...this.getSettings(), ...partial };
+      const updated = { ...this.getSettings(), ...partial, currency: CURRENCY_SYMBOL };
       localStorage.setItem(USER_SETTINGS_KEY, JSON.stringify(updated));
       return { success: true, data: updated };
     } catch (e: any) {

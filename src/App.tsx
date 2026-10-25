@@ -282,8 +282,6 @@ export default function App() {
 
           {activeTab === 'settings' && (
             <SettingsView
-              settings={settings}
-              onUpdateSettings={handleUpdateSettings}
               onResetAllData={() => setIsResetConfirmOpen(true)}
               onRefreshData={refreshData}
               isDemoActive={isDemoActive}

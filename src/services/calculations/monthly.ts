@@ -1,6 +1,7 @@
 /** Monthly statistics, pace comparison and 12-month series. */
 
 import { Purchase, MonthlySummary } from '../../types/index.ts';
+import { CURRENCY_SYMBOL } from './format.ts';
 import { formatMonthNameHe, getDaysInMonth, findTrackingStart, toIsoDate } from './dates.ts';
 
 export const MIN_DAYS_FOR_PROJECTION = 5;
@@ -72,7 +73,7 @@ export function calculateMonthlyStats(
     } else {
       projectedTotal = round2((totalSpent / daysConsidered) * daysInMonth);
       projectionStatus = 'ready';
-      projectionMessage = `אומדן משוער לפי קצב ממוצע של ${dailyAverage} ₪ ליום ב־${daysConsidered} ימי מעקב`;
+      projectionMessage = `אומדן משוער לפי קצב ממוצע של ${dailyAverage} ${CURRENCY_SYMBOL} ליום ב־${daysConsidered} ימי מעקב`;
     }
   } else {
     daysConsidered = daysInMonth - firstTrackedDay + 1;

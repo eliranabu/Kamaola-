@@ -18,7 +18,7 @@ export interface Purchase {
 }
 
 export interface UserSettings {
-  currency: '₪' | '$' | '€';
+  currency: '₪'; // single supported currency (no conversion exists)
   isDemoModeActive: boolean;
   lastBrandPrices: Record<string, number>;
   selectedMonthFilter?: string; // YYYY-MM
