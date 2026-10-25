@@ -15,6 +15,8 @@ jobs:
         with:
           node-version: 22
       - run: bun install --frozen-lockfile
+      - name: Dependency audit (fails on high/critical)
+        run: bun audit --audit-level=high
       - name: Type-check and lint
         run: npm run lint
       - name: Unit tests
