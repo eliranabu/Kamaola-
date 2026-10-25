@@ -23,4 +23,6 @@ npm start          # NODE_ENV=production, מגיש את dist/ + /api/insights
 
 ## הערות כלים
 - `typescript` מצביע ל־`@typescript/typescript6` (ה־API שבו `typescript-eslint` תומך), ו־`tsc` מגיע מ־`typescript7` (alias ל־TS 7). כשטיפוסים ב־`typescript-eslint` יתמכו ב־TS 7 אפשר לאחד חזרה.
+- פונט Heebo מקומי (`@fontsource-variable/heebo`), ללא בקשות לצד שלישי; ב־production השרת שולח CSP מחמיר (`server/security.ts`).
+- אייקוני PWA: `node scripts/generate-icons.js` (או `... maskable`). הסמל ₪ וקטורי ב־`public/icon.svg`, ללא תלות בפונט מותקן.
 - בדיקת תלויות: `bun audit` (ב־CI נכשל על high/critical).

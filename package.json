@@ -10,20 +10,21 @@
     "start": "NODE_ENV=production node dist-server/server.mjs",
     "clean": "node -e \"for (const d of ['dist','dist-server']) require('fs').rmSync(d,{recursive:true,force:true})\"",
     "lint": "tsc --noEmit && eslint .",
-    "test": "tsx src/services/calculations.test.ts && tsx tests/storage.recovery.test.ts && tsx tests/import.test.ts && tsx tests/projections.test.ts && tsx tests/insights.test.ts && tsx tests/consistency.test.ts && tsx tests/lifecycle.test.ts && tsx tests/server.test.ts && tsx tests/currency.test.ts",
+    "test": "tsx src/services/calculations.test.ts && tsx tests/storage.recovery.test.ts && tsx tests/import.test.ts && tsx tests/projections.test.ts && tsx tests/insights.test.ts && tsx tests/consistency.test.ts && tsx tests/lifecycle.test.ts && tsx tests/server.test.ts && tsx tests/currency.test.ts && tsx tests/security.test.ts",
     "build:client": "vite build",
     "test:e2e": "playwright test"
   },
   "dependencies": {
+    "@fontsource-variable/heebo": "^5.3.0",
     "@google/genai": "^2.4.0",
     "@tailwindcss/vite": "^4.3.3",
     "@vitejs/plugin-react": "^6.1.1",
+    "dotenv": "^17.2.3",
+    "express": "^4.21.2",
     "lucide-react": "^0.546.0",
     "react": "^19.0.1",
     "react-dom": "^19.0.1",
-    "vite": "^8.3.0",
-    "express": "^4.21.2",
-    "dotenv": "^17.2.3"
+    "vite": "^8.3.0"
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.14.0",

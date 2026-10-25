@@ -5,6 +5,7 @@ import { parseInsights } from '../src/services/insights.ts';
 import { validateInsightsBody } from './validate.ts';
 import { createRateLimiter } from './rateLimit.ts';
 import { buildInsightsPrompt } from './prompt.ts';
+import { securityHeaders } from './security.ts';
 
 export type GenerateFn = (prompt: string) => Promise<string | null | undefined>;
 
@@ -14,6 +15,8 @@ export interface AppOptions {
   rateLimit?: { windowMs: number; max: number; now?: () => number };
   timeoutMs?: number;
   trustProxyHops?: number;
+  /** Send the Content-Security-Policy header (production; off for the Vite dev server). */
+  csp?: boolean;
 }
 
 function withTimeout<T>(promise: Promise<T>, ms: number): Promise<T> {
@@ -25,12 +28,13 @@ function withTimeout<T>(promise: Promise<T>, ms: number): Promise<T> {
 }
 
 export function createApp(options: AppOptions = {}) {
-  const { generate, timeoutMs = 15_000, trustProxyHops = 0 } = options;
+  const { generate, timeoutMs = 15_000, trustProxyHops = 0, csp = false } = options;
   const limiter = createRateLimiter(options.rateLimit ?? { windowMs: 60_000, max: 10 });
   const app = express();
 
   app.set('trust proxy', trustProxyHops);
   app.disable('x-powered-by');
+  app.use(securityHeaders({ csp }));
   app.use('/api', express.json({ limit: '2kb' }));
 
   app.post('/api/insights', async (req, res) => {

@@ -193,7 +193,7 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-[#080C14] text-[#F5F7FA] flex flex-col font-['Heebo',sans-serif] selection:bg-[#00E676]/30 selection:text-[#00E676]" dir="rtl">
+    <div className="min-h-screen bg-[#080C14] text-[#F5F7FA] flex flex-col selection:bg-[#00E676]/30 selection:text-[#00E676]" dir="rtl">
       {/* WCAG Skip-to-Content Link */}
       <a
         href="#main-content"

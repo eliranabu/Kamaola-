@@ -26,6 +26,7 @@ if (process.env.GEMINI_API_KEY) {
 
 const app = createApp({
   generate,
+  csp: isProd,
   trustProxyHops: Number(process.env.TRUST_PROXY_HOPS || 0)
 });
 

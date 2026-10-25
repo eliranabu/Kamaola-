@@ -1,5 +1,9 @@
 @import "tailwindcss";
 
+@theme {
+  --font-sans: 'Heebo Variable', system-ui, -apple-system, 'Segoe UI', Arial, sans-serif;
+}
+
 @layer base {
   :root {
     --safe-area-bottom: env(safe-area-inset-bottom, 0px);

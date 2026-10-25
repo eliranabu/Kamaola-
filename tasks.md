@@ -25,15 +25,19 @@
 - [X] F-14 `build` בונה גם את השרת (`dist-server`), `start` עם NODE_ENV=production, `clean` חוצה־פלטפורמות, README + `.env.example` — נבדק בהרצה בפועל
 
 ## P2
-- [ ] F-13 strict + ESLint + Vitest + Playwright בריפו + CI
-- [ ] F-15 תלויות (body-parser), הסרת `motion`/`autoprefixer`
-- [ ] F-16 Modal/Toast נגישים (ImportSection משתמש כרגע בדיאלוג ייעודי)
-- [ ] F-17 גלישה ב־768, FAB, תובנות במובייל · F-18 PWA · F-19 מטבע
+- [X] F-13 `strict` TS, ESLint (typescript-eslint דרך TS6 API לצד `tsc` של TS7, react-hooks, jsx-a11y), Playwright E2E בריפו (34 תרחישים מול build ה־production), CI (`.github/workflows/ci.yml`), בדיקות unit ללא תלות בתאריך
+- [X] F-15 `bun audit`: 0 פגיעויות; הוסרו `motion` ו־`autoprefixer`; bun כמנהל חבילות יחיד
+- [X] F-19 ₪ בלבד: הוסרה בחירת המטבע, סמל אחד משותף (`CURRENCY_SYMBOL`), הגדרות ישנות עם $/€ מנורמלות
+- [X] F-16 `Modal` משותף (focus-trap, inert, החזרת פוקוס, נעילת גלילה), הגנה מאובדן קלט בטופס, Toast עם live-region קבוע ושגיאות שנשארות, היררכיית כותרות, טקסט ≥12px, שמות נגישים לעמודות הגרף; axe: 0 Serious/Critical (desktop + phone, מסכים ודיאלוגים)
+- [X] F-17 סרגל תחתון עם כפתור הוספה מרכזי (במקום FAB), כפתור תובנות במובייל, ללא גלישה אופקית ב־320–1280
+- [X] F-18 אייקוני PWA: maskable אמיתי + תיקון אייקונים שהציגו ריבוע "tofu" במקום ₪ (גליף וקטורי ב־`icon.svg`); ללא נעילת פורטרט; SW רק ב־production; פונט Heebo מקומי; CSP וכותרות אבטחה; בדיקת offline
 
 ## P3
 - [ ] F-20, F-22–F-24 · כיוון עיצובי (דורש אישור נפרד)
 
 ## הערות
-- `App.tsx` (~350 שורות) ו־`SettingsView.tsx` (~320) עדיין מעל היעד; פיצול ל־hooks/רכיבים מתוכנן ב־P2.
+- `App.tsx` (~340 שורות), `SettingsView.tsx` (~300), `AddPurchaseModal.tsx` (~600) עדיין מעל יעד 200 השורות; פיצול ל־hooks/רכיבים לא בוצע ב־P2.
 - `storage.ts` 280 שורות (מעל היעד 200): נשאר מחלקה אחת; פיצול נוסף אפשרי ב־P1.
 - בדיקות 38–40 הישנות קודדו את הבאג (ממוצע מיום 1 גם כשהרכישה הראשונה באמצע החודש); נתוני הבדיקה עודכנו כך שהרכישה הראשונה ב־1 לחודש, והתנהגות „התחלה באמצע חודש” נבדקת ב־tests/projections.test.ts.
+- HSTS לא מוגדר בשרת (תלוי באירוח/HTTPS בקצה); CSP פעיל רק ב־production.
+- ה־CI לא הורץ בפועל (אין GitHub Actions מהסביבה): נבדק תחבירית (YAML) והפקודות הורצו מקומית.
