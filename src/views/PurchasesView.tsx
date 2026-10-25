@@ -142,7 +142,7 @@ export const PurchasesView: React.FC<PurchasesViewProps> = ({
                 placeholder="חיפוש לפי מותג, מקום או הערה..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full bg-[#080C14] border border-slate-700 focus:border-[#00E676] text-[#F5F7FA] text-xs sm:text-sm rounded-xl pr-10 pl-3 py-2.5 outline-none transition-colors min-h-[44px]"
+                className="w-full bg-[#080C14] border border-slate-700 focus:border-[#00E676] text-[#F5F7FA] text-xs sm:text-sm rounded-xl pr-10 pl-3 py-2.5  transition-colors min-h-[44px]"
               />
             </div>
           </div>
@@ -156,7 +156,7 @@ export const PurchasesView: React.FC<PurchasesViewProps> = ({
               id="filter-month"
               value={selectedMonth}
               onChange={(e) => setSelectedMonth(e.target.value)}
-              className="w-full bg-[#080C14] border border-slate-700 focus:border-[#00E676] text-[#F5F7FA] text-xs sm:text-sm rounded-xl px-3.5 py-2.5 outline-none transition-colors min-h-[44px]"
+              className="w-full bg-[#080C14] border border-slate-700 focus:border-[#00E676] text-[#F5F7FA] text-xs sm:text-sm rounded-xl px-3.5 py-2.5  transition-colors min-h-[44px]"
             >
               <option value="all">כל החודשים ({purchases.length} רכישות)</option>
               {availableMonths.map((m) => (
@@ -176,7 +176,7 @@ export const PurchasesView: React.FC<PurchasesViewProps> = ({
               id="filter-brand"
               value={selectedBrand}
               onChange={(e) => setSelectedBrand(e.target.value)}
-              className="w-full bg-[#080C14] border border-slate-700 focus:border-[#00E676] text-[#F5F7FA] text-xs sm:text-sm rounded-xl px-3.5 py-2.5 outline-none transition-colors min-h-[44px]"
+              className="w-full bg-[#080C14] border border-slate-700 focus:border-[#00E676] text-[#F5F7FA] text-xs sm:text-sm rounded-xl px-3.5 py-2.5  transition-colors min-h-[44px]"
             >
               <option value="all">כל המותגים</option>
               {availableBrands.map((b) => (
@@ -191,25 +191,25 @@ export const PurchasesView: React.FC<PurchasesViewProps> = ({
         {/* Filter Summary Metric Strip */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-3 border-t border-slate-800/80 bg-[#080C14]/50 p-3.5 rounded-xl">
           <div>
-            <span className="text-[11px] text-[#AAB4C5] block">הוצאה בתקופה</span>
+            <span className="text-xs text-[#AAB4C5] block">הוצאה בתקופה</span>
             <span className="text-base sm:text-xl font-bold text-[#00E676] font-mono tabular-nums block mt-0.5">
               {formatCurrency(periodSummary.totalSpent, settings.currency)}
             </span>
           </div>
           <div>
-            <span className="text-[11px] text-[#AAB4C5] block">מספר רכישות</span>
+            <span className="text-xs text-[#AAB4C5] block">מספר רכישות</span>
             <span className="text-base sm:text-xl font-bold text-[#F5F7FA] font-mono tabular-nums block mt-0.5">
               {periodSummary.count}
             </span>
           </div>
           <div>
-            <span className="text-[11px] text-[#AAB4C5] block">סה״כ חפיסות</span>
+            <span className="text-xs text-[#AAB4C5] block">סה״כ חפיסות</span>
             <span className="text-base sm:text-xl font-bold text-[#F5F7FA] font-mono tabular-nums block mt-0.5">
               {periodSummary.totalPacks}
             </span>
           </div>
           <div>
-            <span className="text-[11px] text-[#AAB4C5] block">מחיר ממוצע לחפיסה</span>
+            <span className="text-xs text-[#AAB4C5] block">מחיר ממוצע לחפיסה</span>
             <span className="text-base sm:text-xl font-bold text-[#F5F7FA] font-mono tabular-nums block mt-0.5">
               {formatCurrencyExact(periodSummary.avgPerPack, settings.currency)}
             </span>
@@ -259,7 +259,8 @@ export const PurchasesView: React.FC<PurchasesViewProps> = ({
           </button>
         </div>
       ) : (
-        <section aria-label="רשימת רכישות מפורטת" className="space-y-3">
+        <section aria-labelledby="purchase-list-heading" className="space-y-3">
+          <h2 id="purchase-list-heading" className="sr-only">רשימת רכישות מפורטת</h2>
           {filteredPurchases.map((purchase) => (
             <article
               key={purchase.id}
@@ -268,7 +269,7 @@ export const PurchasesView: React.FC<PurchasesViewProps> = ({
               {/* Main Information */}
               <div className="flex-1 space-y-1.5 min-w-0">
                 <div className="flex items-center gap-3 flex-wrap">
-                  <h2 className="text-base font-bold text-[#F5F7FA]">{purchase.brand}</h2>
+                  <h3 className="text-base font-bold text-[#F5F7FA]">{purchase.brand}</h3>
                   <div className="text-xs text-[#AAB4C5] flex items-center gap-2 font-mono">
                     <span>{purchase.date}</span>
                     {purchase.time && <span>· {purchase.time}</span>}
@@ -298,7 +299,7 @@ export const PurchasesView: React.FC<PurchasesViewProps> = ({
               {/* Total & Action Buttons with SAFE spacing */}
               <div className="flex items-center justify-between sm:justify-end gap-5 shrink-0 pt-3 sm:pt-0 border-t sm:border-t-0 border-slate-800/80">
                 <div className="text-right">
-                  <div className="text-[11px] text-[#AAB4C5]">סך הרכישה</div>
+                  <div className="text-xs text-[#AAB4C5]">סך הרכישה</div>
                   <div className="text-xl sm:text-2xl font-black text-[#00E676] font-mono tabular-nums">
                     {formatCurrency(purchase.totalPrice, settings.currency)}
                   </div>

@@ -3,6 +3,7 @@ import { Upload, Undo2, LifeBuoy } from 'lucide-react';
 import { ImportMode, ImportPreview, storage } from '../services/storage.ts';
 import { MAX_IMPORT_CHARS } from '../services/storage/transfer.ts';
 import { downloadText } from '../services/download.ts';
+import { Modal } from './Modal.tsx';
 
 interface ImportSectionProps {
   isDemoActive: boolean;
@@ -16,6 +17,7 @@ const cardBtn =
 /** Safe import: preview -> explicit confirmation (merge/replace) -> automatic backup -> undo. */
 export const ImportSection: React.FC<ImportSectionProps> = ({ isDemoActive, onRefreshData, onStatus }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const cancelRef = useRef<HTMLButtonElement>(null);
   const [preview, setPreview] = useState<ImportPreview | null>(null);
   const [mode, setMode] = useState<ImportMode>('merge');
   const [hasBackup, setHasBackup] = useState(() => storage.hasImportBackup());
@@ -87,9 +89,14 @@ export const ImportSection: React.FC<ImportSectionProps> = ({ isDemoActive, onRe
       )}
 
       {preview && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85" dir="rtl" role="presentation">
-          <div role="dialog" aria-modal="true" aria-labelledby="import-title" className="w-full max-w-md bg-[#141E34] border border-slate-700 rounded-2xl p-6 space-y-4">
-            <h3 id="import-title" className="text-base font-bold text-[#F5F7FA]">אישור שחזור מגיבוי</h3>
+        <Modal
+          isOpen
+          onClose={() => setPreview(null)}
+          labelledBy="import-title"
+          initialFocusRef={cancelRef} // safest default: cancel
+          panelClassName="w-full max-w-md bg-[#141E34] border border-slate-700 rounded-2xl p-6 space-y-4"
+        >
+            <h2 id="import-title" className="text-base font-bold text-[#F5F7FA]">אישור שחזור מגיבוי</h2>
             <p className="text-sm text-[#AAB4C5] leading-relaxed">
               בקובץ נמצאו <strong className="text-[#F5F7FA]">{preview.purchases.length}</strong> רכישות תקינות
               {preview.skipped > 0 && ` (${preview.skipped} פריטים פגומים דולגו)`}. כרגע שמורות אצלכם {preview.existingCount} רכישות.
@@ -107,14 +114,12 @@ export const ImportSection: React.FC<ImportSectionProps> = ({ isDemoActive, onRe
             </fieldset>
             <p className="text-xs text-[#AAB4C5]">לפני השינוי נשמר גיבוי אוטומטי, ואפשר לבטל את הייבוא.</p>
             <div className="flex gap-3">
-              {/* eslint-disable-next-line jsx-a11y/no-autofocus -- safest default in a destructive dialog; replaced by Modal focus management */}
-              <button autoFocus onClick={() => setPreview(null)} className="flex-1 py-3 bg-slate-800 text-[#F5F7FA] text-sm font-semibold rounded-xl min-h-[48px]">ביטול</button>
+              <button ref={cancelRef} onClick={() => setPreview(null)} className="flex-1 py-3 bg-slate-800 text-[#F5F7FA] text-sm font-semibold rounded-xl min-h-[48px]">ביטול</button>
               <button onClick={confirm} className="flex-1 py-3 bg-[#00E676] text-[#080C14] text-sm font-bold rounded-xl min-h-[48px]">
                 {mode === 'merge' ? 'מזג רכישות' : 'החלף את כל הנתונים'}
               </button>
             </div>
-          </div>
-        </div>
+        </Modal>
       )}
     </div>
   );

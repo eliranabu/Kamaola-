@@ -91,11 +91,11 @@ export const ExpenseBarChart: React.FC<ExpenseBarChartProps> = ({
           <table className="w-full text-right text-xs text-[#F5F7FA]">
             <thead>
               <tr className="border-b border-slate-800 text-[#AAB4C5]">
-                <th className="py-2.5 px-3">חודש</th>
-                <th className="py-2.5 px-3">סכום בפועל</th>
-                <th className="py-2.5 px-3">חפיסות</th>
-                <th className="py-2.5 px-3">רכישות</th>
-                <th className="py-2.5 px-3">ממוצע יומי</th>
+                <th scope="col" className="py-2.5 px-3">חודש</th>
+                <th scope="col" className="py-2.5 px-3">סכום בפועל</th>
+                <th scope="col" className="py-2.5 px-3">חפיסות</th>
+                <th scope="col" className="py-2.5 px-3">רכישות</th>
+                <th scope="col" className="py-2.5 px-3">ממוצע יומי</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-800/60 font-mono tabular-nums">
@@ -140,16 +140,21 @@ export const ExpenseBarChart: React.FC<ExpenseBarChartProps> = ({
                     if (onSelectMonth) onSelectMonth(item.monthKey);
                   }}
                   aria-pressed={isSelected}
-                  aria-label={`${item.monthNameHe}: ${
+                  className="group flex-1 flex flex-col items-center h-full justify-end focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00E676] rounded-lg transition-transform"
+                >
+                  {/* Accessible name as real text (the visible month/amount labels are decorative duplicates) */}
+                  <span className="sr-only">
+                    {`${item.monthNameHe}: ${
                     item.hasData
                       ? `${formatCurrency(item.totalSpent, settings.currency)}, ${item.totalPacks} חפיסות`
                       : 'אין נתונים'
-                  }`}
-                  className="group flex-1 flex flex-col items-center h-full justify-end focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#00E676] rounded-lg transition-transform"
-                >
+                    }`}
+                  </span>
+
                   {/* Amount label on hover or selected */}
                   <div
-                    className={`text-[10px] sm:text-xs font-mono font-bold mb-1.5 transition-opacity tabular-nums whitespace-nowrap ${
+                    aria-hidden="true"
+                    className={`text-xs font-mono font-bold mb-1.5 transition-opacity tabular-nums whitespace-nowrap ${
                       isSelected ? 'text-[#00E676] opacity-100' : 'text-[#AAB4C5] opacity-0 group-hover:opacity-100'
                     }`}
                   >
@@ -176,7 +181,8 @@ export const ExpenseBarChart: React.FC<ExpenseBarChartProps> = ({
 
                   {/* X Axis Month and Year Labels */}
                   <span
-                    className={`text-[10px] sm:text-[11px] mt-2 tracking-tight transition-colors ${
+                    aria-hidden="true"
+                    className={`text-xs mt-2 tracking-tight transition-colors ${
                       isSelected
                         ? 'font-bold text-[#00E676]'
                         : item.isCurrentMonth
@@ -186,7 +192,7 @@ export const ExpenseBarChart: React.FC<ExpenseBarChartProps> = ({
                   >
                     {item.monthNameHe.split(' ')[0].slice(0, 3)}
                   </span>
-                  <span className="text-[9px] text-[#AAB4C5]/80 font-mono">
+                  <span aria-hidden="true" className="text-xs text-[#AAB4C5]/80 font-mono">
                     {item.year.toString().slice(2)}
                   </span>
                 </button>
@@ -197,7 +203,7 @@ export const ExpenseBarChart: React.FC<ExpenseBarChartProps> = ({
       )}
 
       {/* Chart Footer Legend with Shapes and Contrast (Not color alone) */}
-      <div className="pt-3 border-t border-slate-800/80 flex flex-wrap items-center justify-between gap-2 text-[11px] text-[#AAB4C5]">
+      <div className="pt-3 border-t border-slate-800/80 flex flex-wrap items-center justify-between gap-2 text-xs text-[#AAB4C5]">
         <div className="flex items-center gap-4 flex-wrap">
           <div className="flex items-center gap-1.5">
             <span className="w-2.5 h-2.5 rounded-sm bg-[#00E676] ring-1 ring-white/60" aria-hidden="true" />

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Download, Share, X, WifiOff } from 'lucide-react';
 import { usePWAInstall } from '../services/usePWAInstall.ts';
 import { useOnlineStatus } from '../services/useOnlineStatus.ts';
+import { Modal } from './Modal.tsx';
 
 export const PWAInstallBanner: React.FC = () => {
   const { isInstallable, isInstalled, isIOS, install } = usePWAInstall();
@@ -109,70 +110,47 @@ export const PWAInstallBanner: React.FC = () => {
         </aside>
 
         {showIOSGuide && (
-          <div
-            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-sm"
-            role="presentation"
-            onClick={(e) => {
-              if (e.target === e.currentTarget) setShowIOSGuide(false);
-            }}
+          <Modal
+            isOpen
+            onClose={() => setShowIOSGuide(false)}
+            labelledBy="ios-install-title"
+            panelClassName="w-full max-w-sm bg-[#141E34] border border-slate-700 rounded-2xl p-6 shadow-2xl text-right"
           >
-            <div
-              role="dialog"
-              aria-modal="true"
-              aria-labelledby="ios-install-title"
-              className="w-full max-w-sm bg-[#141E34] border border-slate-700 rounded-2xl p-6 shadow-2xl focus:outline-none text-right"
-              dir="rtl"
-            >
-              <div className="flex items-center justify-between pb-3 border-b border-slate-800">
-                <h3 id="ios-install-title" className="text-base font-bold text-[#F5F7FA]">
-                  התקנה במכשירי אפל (iOS)
-                </h3>
-                <button
-                  onClick={() => setShowIOSGuide(false)}
-                  className="w-8 h-8 rounded-lg hover:bg-slate-800 text-[#AAB4C5] flex items-center justify-center min-h-[44px] min-w-[44px]"
-                  aria-label="סגירה"
-                >
-                  <X className="w-4 h-4" />
-                </button>
-              </div>
-
-              <div className="space-y-4 py-4 text-xs sm:text-sm text-[#E2E8F0] leading-relaxed">
-                <div className="flex items-start gap-3">
-                  <div className="w-7 h-7 rounded-lg bg-blue-500/15 text-blue-400 flex items-center justify-center shrink-0 mt-0.5 font-bold">
-                    1
-                  </div>
-                  <div>
-                    לחצו על כפתור <strong>השיתוף (Share)</strong> בתחתית דפדפן Safari (אייקון ריבוע עם חץ כלפי מעלה).
-                  </div>
-                </div>
-
-                <div className="flex items-start gap-3">
-                  <div className="w-7 h-7 rounded-lg bg-[#00E676]/15 text-[#00E676] flex items-center justify-center shrink-0 mt-0.5 font-bold">
-                    2
-                  </div>
-                  <div>
-                    גללו מעט למטה ולחצו על <strong>״הוסף למסך הבית״ (Add to Home Screen)</strong>.
-                  </div>
-                </div>
-
-                <div className="flex items-start gap-3">
-                  <div className="w-7 h-7 rounded-lg bg-purple-500/15 text-purple-400 flex items-center justify-center shrink-0 mt-0.5 font-bold">
-                    3
-                  </div>
-                  <div>
-                    האפליקציה תיפתח כמסך נפרד עצמאי ללא שורת כתובת, ותעבוד גם כשאין קליטה!
-                  </div>
-                </div>
-              </div>
-
+            <div className="flex items-center justify-between pb-3 border-b border-slate-800">
+              <h2 id="ios-install-title" className="text-base font-bold text-[#F5F7FA]">
+                התקנה במכשירי אפל (iOS)
+              </h2>
               <button
                 onClick={() => setShowIOSGuide(false)}
-                className="w-full py-2.5 bg-[#00E676] text-[#080C14] font-bold text-xs sm:text-sm rounded-xl transition-colors min-h-[44px]"
+                className="w-8 h-8 rounded-lg hover:bg-slate-800 text-[#AAB4C5] flex items-center justify-center min-h-[44px] min-w-[44px]"
+                aria-label="סגירה"
               >
-                הבנתי, תודה
+                <X className="w-4 h-4" aria-hidden="true" />
               </button>
             </div>
-          </div>
+
+            <ol className="space-y-4 py-4 text-xs sm:text-sm text-[#E2E8F0] leading-relaxed">
+              <li className="flex items-start gap-3">
+                <span className="w-7 h-7 rounded-lg bg-blue-500/15 text-blue-400 flex items-center justify-center shrink-0 mt-0.5 font-bold" aria-hidden="true">1</span>
+                <span>לחצו על כפתור <strong>השיתוף (Share)</strong> בתחתית דפדפן Safari (אייקון ריבוע עם חץ כלפי מעלה).</span>
+              </li>
+              <li className="flex items-start gap-3">
+                <span className="w-7 h-7 rounded-lg bg-[#00E676]/15 text-[#00E676] flex items-center justify-center shrink-0 mt-0.5 font-bold" aria-hidden="true">2</span>
+                <span>גללו מעט למטה ולחצו על <strong>״הוסף למסך הבית״ (Add to Home Screen)</strong>.</span>
+              </li>
+              <li className="flex items-start gap-3">
+                <span className="w-7 h-7 rounded-lg bg-purple-500/15 text-purple-400 flex items-center justify-center shrink-0 mt-0.5 font-bold" aria-hidden="true">3</span>
+                <span>האפליקציה תיפתח כמסך נפרד עצמאי ללא שורת כתובת, ותעבוד גם כשאין קליטה!</span>
+              </li>
+            </ol>
+
+            <button
+              onClick={() => setShowIOSGuide(false)}
+              className="w-full py-2.5 bg-[#00E676] text-[#080C14] font-bold text-xs sm:text-sm rounded-xl transition-colors min-h-[44px]"
+            >
+              הבנתי, תודה
+            </button>
+          </Modal>
         )}
       </>
     );

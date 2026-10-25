@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { Modal } from './Modal.tsx';
 import { Sparkles, X, Lightbulb, Target, Loader2 } from 'lucide-react';
 import { MonthlySummary, YearlySummary, UserSettings } from '../types/index.ts';
 import {
@@ -42,15 +43,6 @@ export const SmartInsightsModal: React.FC<SmartInsightsModalProps> = ({
     }
   }, [isOpen]);
 
-  useEffect(() => {
-    if (!isOpen) return;
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose();
-    };
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isOpen, onClose]);
-
   const handleApprove = async () => {
     abortRef.current?.abort();
     const controller = new AbortController();
@@ -63,23 +55,13 @@ export const SmartInsightsModal: React.FC<SmartInsightsModalProps> = ({
     setPhase('done');
   };
 
-  if (!isOpen) return null;
-
   return (
-    <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-sm"
-      dir="rtl"
-      role="presentation"
-      onClick={(e) => {
-        if (e.target === e.currentTarget) onClose();
-      }}
+    <Modal
+      isOpen={isOpen}
+      onClose={onClose}
+      labelledBy="insights-dialog-title"
+      panelClassName="w-full max-w-lg bg-[#141E34] border border-slate-700 rounded-3xl p-6 shadow-2xl overflow-hidden relative"
     >
-      <div
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="insights-dialog-title"
-        className="w-full max-w-lg bg-[#141E34] border border-slate-700 rounded-3xl p-6 shadow-2xl overflow-hidden relative focus:outline-none"
-      >
         {/* Header */}
         <div className="flex items-center justify-between pb-4 border-b border-slate-800">
           <div className="flex items-center gap-3">
@@ -168,7 +150,7 @@ export const SmartInsightsModal: React.FC<SmartInsightsModalProps> = ({
                 <div className="bg-gradient-to-r from-blue-950/40 to-[#141E34] border border-blue-500/20 p-4 rounded-2xl flex items-start gap-3">
                   <Target className="w-5 h-5 text-blue-400 shrink-0 mt-0.5" aria-hidden="true" />
                   <div>
-                    <h4 className="text-xs font-bold text-blue-300">יעד ששווה לשאוף אליו</h4>
+                    <h3 className="text-xs font-bold text-blue-300">יעד ששווה לשאוף אליו</h3>
                     <p className="text-xs sm:text-sm text-[#E2E8F0] mt-1 leading-relaxed">
                       {insights.milestoneIdea}
                     </p>
@@ -188,7 +170,6 @@ export const SmartInsightsModal: React.FC<SmartInsightsModalProps> = ({
             סגירה
           </button>
         </div>
-      </div>
-    </div>
+    </Modal>
   );
 };

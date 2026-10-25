@@ -46,21 +46,21 @@ export const TopBar: React.FC<TopBarProps> = ({
       {/* Main Top Bar - 3 Zone Architecture */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
         {/* Zone 1: Wordmark */}
-        <div className="flex items-center gap-3 shrink-0">
+        <div className="flex items-center gap-3 min-w-0">
           <div
             className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#00E676]/20 to-[#141E34] border border-[#00E676]/40 flex items-center justify-center shadow-sm"
             aria-hidden="true"
           >
             <span className="font-bold text-base text-[#00E676]">₪</span>
           </div>
-          <div className="flex flex-col">
+          <div className="flex flex-col min-w-0">
             <button
               onClick={() => onTabChange('dashboard')}
-              className="text-lg font-extrabold tracking-tight text-[#F5F7FA] hover:text-[#00E676] transition-colors text-right whitespace-nowrap focus-visible:ring-2 focus-visible:ring-[#00E676] rounded-md"
+              className="text-lg font-extrabold tracking-tight text-[#F5F7FA] hover:text-[#00E676] transition-colors text-right whitespace-nowrap truncate max-w-full focus-visible:ring-2 focus-visible:ring-[#00E676] rounded-md"
             >
               כמה זה עולה?
             </button>
-            <span className="text-[11px] text-[#AAB4C5] hidden sm:inline">מעקב הוצאות וחיסכון בעישון</span>
+            <span className="text-xs text-[#AAB4C5] hidden sm:inline">מעקב הוצאות וחיסכון בעישון</span>
           </div>
         </div>
 
@@ -118,17 +118,17 @@ export const TopBar: React.FC<TopBarProps> = ({
             <button
               onClick={onOpenInsights}
               title="תובנות פיננסיות חכמות"
-              aria-label="פתיחת תובנות פיננסיות חכמות"
-              className="hidden sm:flex items-center gap-1.5 px-3 py-2 text-xs font-medium text-[#AAB4C5] hover:text-[#F5F7FA] bg-[#141E34]/60 hover:bg-[#141E34] border border-white/5 rounded-xl transition-colors min-h-[44px]"
+              aria-label="תובנות חכמות"
+              className="flex items-center justify-center gap-1.5 px-3 py-2 text-xs font-medium text-[#AAB4C5] hover:text-[#F5F7FA] bg-[#141E34]/60 hover:bg-[#141E34] border border-white/5 rounded-xl transition-colors min-h-[44px] min-w-[44px] focus-visible:ring-2 focus-visible:ring-[#00E676]"
             >
-              <Sparkles className="w-3.5 h-3.5 text-[#00E676]" aria-hidden="true" />
-              <span>תובנות חכמות</span>
+              <Sparkles className="w-4 h-4 text-[#00E676]" aria-hidden="true" />
+              <span className="hidden lg:inline">תובנות חכמות</span>
             </button>
           )}
 
           <button
             onClick={onOpenAddModal}
-            className="flex items-center gap-2 px-4 py-2 text-xs sm:text-sm font-bold text-[#080C14] bg-[#00E676] hover:bg-[#00c864] rounded-xl shadow-[0_0_15px_rgba(0,230,118,0.3)] transition-all active:scale-[0.98] min-h-[44px] focus-visible:ring-2 focus-visible:ring-[#00E676] focus-visible:ring-offset-2 focus-visible:ring-offset-[#080C14]"
+            className="hidden md:flex items-center gap-2 px-4 py-2 text-xs sm:text-sm font-bold text-[#080C14] bg-[#00E676] hover:bg-[#00c864] rounded-xl shadow-[0_0_15px_rgba(0,230,118,0.3)] transition-all active:scale-[0.98] min-h-[44px] focus-visible:ring-2 focus-visible:ring-[#00E676] focus-visible:ring-offset-2 focus-visible:ring-offset-[#080C14]"
             aria-label="הוספת רכישה חדשה"
           >
             <Plus className="w-4 h-4 stroke-[2.5]" aria-hidden="true" />

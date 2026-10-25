@@ -90,7 +90,7 @@ export const SavingsView: React.FC<SavingsViewProps> = ({
             <span className="font-bold text-[#F5F7FA] font-mono tabular-nums text-sm">
               {formatCurrency(baselineMonthlySpend, settings.currency)}
             </span>
-            <span className="block text-[10px] text-[#AAB4C5] mt-0.5">{baselineExplanation}</span>
+            <span className="block text-xs text-[#AAB4C5] mt-0.5">{baselineExplanation}</span>
           </div>
         </div>
 
@@ -110,7 +110,7 @@ export const SavingsView: React.FC<SavingsViewProps> = ({
                 }`}
               >
                 <div className="text-xs sm:text-sm font-bold">{btn.label}</div>
-                <div className="text-[10px] text-[#AAB4C5] mt-0.5">{btn.desc}</div>
+                <div className="text-xs text-[#AAB4C5] mt-0.5">{btn.desc}</div>
               </button>
             );
           })}
@@ -140,7 +140,7 @@ export const SavingsView: React.FC<SavingsViewProps> = ({
             aria-valuenow={percentage}
             className="w-full accent-[#00E676] cursor-pointer h-2.5 bg-[#080C14] rounded-lg focus-visible:ring-2 focus-visible:ring-[#00E676]"
           />
-          <div className="flex justify-between text-[11px] text-[#AAB4C5] mt-1 font-medium">
+          <div className="flex justify-between text-xs text-[#AAB4C5] mt-1 font-medium">
             <span>0% (המשך מצב קיים)</span>
             <span>50% (חצי)</span>
             <span>100% (הפסקה מוחלטת)</span>
@@ -236,7 +236,7 @@ export const SavingsView: React.FC<SavingsViewProps> = ({
           </div>
         </div>
 
-        <div className="mt-4 flex items-center justify-between text-[11px] text-[#AAB4C5]">
+        <div className="mt-4 flex items-center justify-between text-xs text-[#AAB4C5]">
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-1.5">
               <span className="w-2.5 h-2.5 rounded-sm bg-slate-600" aria-hidden="true" />

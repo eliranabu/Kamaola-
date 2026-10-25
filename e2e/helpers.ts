@@ -20,8 +20,14 @@ export async function openWithStorage(page: Page, raw: string | null): Promise<v
 
 export const seed = (page: Page, items: unknown[]) => openWithStorage(page, JSON.stringify(items));
 
-export const goToTab = (page: Page, name: string) =>
-  page.getByRole('navigation', { name: 'ניווט ראשי' }).getByText(name, { exact: true }).click();
+/** Uses the bottom bar on phones and the top bar from 768px (md) up - like a real user. */
+export const goToTab = (page: Page, name: string) => {
+  const mobile = (page.viewportSize()?.width ?? 1280) < 768;
+  return page
+    .getByRole('navigation', { name: mobile ? 'ניווט תחתון למובייל' : 'ניווט ראשי' })
+    .getByText(name, { exact: true })
+    .click();
+};
 
 export const storedIds = (page: Page) =>
   page.evaluate((k) => (JSON.parse(localStorage.getItem(k) || '[]') as { id: string }[]).map((x) => x.id), USER_KEY);

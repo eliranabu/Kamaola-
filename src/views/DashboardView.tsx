@@ -92,7 +92,8 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
       ) : null}
 
       {/* Primary KPI Grid */}
-      <section aria-label="מדדים מרכזיים לחודש הנוכחי" className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <section aria-labelledby="kpi-heading" className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <h2 id="kpi-heading" className="sr-only">מדדים מרכזיים לחודש הנוכחי</h2>
         {/* KPI 1: Month-to-date Actual Spent (Dominant Anchor) */}
         <div className="bg-[#141E34] border-2 border-[#00E676]/30 rounded-2xl p-5 shadow-lg flex flex-col justify-between relative overflow-hidden">
           <div className="flex items-center justify-between">
@@ -132,7 +133,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                     )}
                     <span className="text-[#AAB4C5]">לעומת חודש שעבר</span>
                   </div>
-                  <span className="text-[11px] text-[#AAB4C5]">
+                  <span className="text-xs text-[#AAB4C5]">
                     מחושב לפי ממוצע של {formatCurrencyExact(paceComp.currDailyAverage, settings.currency)}/יום לעומת {formatCurrencyExact(paceComp.prevDailyAverage, settings.currency)}/יום
                   </span>
                 </>
@@ -194,7 +195,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
               <h3 className="text-xs font-bold text-amber-300">תחזית לסוף החודש</h3>
             </div>
             {/* Zero-Pill clean text label */}
-            <span className="text-[11px] text-[#AAB4C5]">
+            <span className="text-xs text-[#AAB4C5]">
               {currentMonthStats.projectionStatus === 'ready' ? 'אומדן משוער' : 'בהמתנה לנתונים'}
             </span>
           </div>
@@ -291,9 +292,9 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
               <Sparkles className="w-4 h-4" aria-hidden="true" />
               <span>תרחיש חיסכון פוטנציאלי</span>
             </div>
-            <h3 id="savings-teaser-title" className="text-base font-bold text-[#F5F7FA] mt-2">
+            <h2 id="savings-teaser-title" className="text-base font-bold text-[#F5F7FA] mt-2">
               הפחתה של 25% בהוצאה
-            </h3>
+            </h2>
             <p className="text-xs text-[#AAB4C5] mt-1 leading-relaxed">
               בהתבסס על ההוצאה החודשית שלך, הפחתה של רבע מהכמות בלבד תחסוך:
             </p>

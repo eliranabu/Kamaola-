@@ -32,7 +32,7 @@ export const WeeklyGoalCard: React.FC<WeeklyGoalCardProps> = ({
             <Target className="w-5 h-5" />
           </div>
           <div>
-            <h3 className="text-sm font-bold text-[#F5F7FA]">יעד צמצום שבועי (אתגר אישי)</h3>
+            <h2 className="text-sm font-bold text-[#F5F7FA]">יעד צמצום שבועי (אתגר אישי)</h2>
             <p className="text-xs text-[#AAB4C5] mt-0.5">
               הגדירו תקרת חפיסות שבועית ועקבו אחר העמידה ביעד בזמן אמת
             </p>
@@ -54,10 +54,10 @@ export const WeeklyGoalCard: React.FC<WeeklyGoalCardProps> = ({
     return (
       <div className="bg-[#141E34] border border-[#00E676]/30 rounded-2xl p-4 sm:p-5 shadow-lg" dir="rtl">
         <div className="flex items-center justify-between pb-3 border-b border-slate-800">
-          <h3 className="text-sm font-bold text-[#F5F7FA] flex items-center gap-2">
+          <h2 className="text-sm font-bold text-[#F5F7FA] flex items-center gap-2">
             <Target className="w-4 h-4 text-[#00E676]" aria-hidden="true" />
             <span>קביעת יעד חפיסות לשבוע (ראשון עד שבת)</span>
-          </h3>
+          </h2>
           <button
             onClick={() => setIsEditing(false)}
             className="text-xs text-[#AAB4C5] hover:text-[#F5F7FA] min-h-[36px] px-2"
@@ -78,7 +78,7 @@ export const WeeklyGoalCard: React.FC<WeeklyGoalCardProps> = ({
               max="50"
               value={goalInput}
               onChange={(e) => setGoalInput(e.target.value)}
-              className="w-20 bg-[#080C14] border border-slate-700 focus:border-[#00E676] text-[#F5F7FA] font-bold text-base rounded-xl px-3 py-2 text-center tabular-nums outline-none min-h-[44px]"
+              className="w-20 bg-[#080C14] border border-slate-700 focus:border-[#00E676] text-[#F5F7FA] font-bold text-base rounded-xl px-3 py-2 text-center tabular-nums  min-h-[44px]"
             />
             <span className="text-xs text-[#AAB4C5]">חפיסות</span>
           </div>
@@ -134,10 +134,10 @@ export const WeeklyGoalCard: React.FC<WeeklyGoalCardProps> = ({
             )}
           </div>
           <div>
-            <h3 className="text-xs sm:text-sm font-bold text-[#F5F7FA]">
+            <h2 className="text-xs sm:text-sm font-bold text-[#F5F7FA]">
               יעד שבועי: עד {stats.weeklyPackGoal} חפיסות
-            </h3>
-            <span className="text-[11px] text-[#AAB4C5]">שבוע נוכחי (מראשון עד שבת)</span>
+            </h2>
+            <span className="text-xs text-[#AAB4C5]">שבוע נוכחי (מראשון עד שבת)</span>
           </div>
         </div>
 

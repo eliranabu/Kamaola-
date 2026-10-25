@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { Modal } from './Modal.tsx';
 import { X, Check, Calendar, Clock, MapPin, FileText, ChevronDown, AlertCircle, Loader2 } from 'lucide-react';
 import { Purchase, UserSettings } from '../types/index.ts';
 import { POPULAR_ISRAELI_BRANDS } from '../services/storage.ts';
@@ -21,7 +22,7 @@ export const AddPurchaseModal: React.FC<AddPurchaseModalProps> = ({
   initialPurchase,
   settings
 }) => {
-  const modalRef = useRef<HTMLDivElement>(null);
+  const keepEditingRef = useRef<HTMLButtonElement>(null);
   const brandSelectRef = useRef<HTMLSelectElement>(null);
   const customBrandInputRef = useRef<HTMLInputElement>(null);
 
@@ -52,6 +53,8 @@ export const AddPurchaseModal: React.FC<AddPurchaseModalProps> = ({
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showOptionalFields, setShowOptionalFields] = useState(false);
+  const [isDirty, setIsDirty] = useState(false);
+  const [confirmDiscard, setConfirmDiscard] = useState(false);
 
   // Initialize or reset when modal opens or initialPurchase changes
   useEffect(() => {
@@ -85,34 +88,24 @@ export const AddPurchaseModal: React.FC<AddPurchaseModalProps> = ({
     }
     setErrors({});
     setIsSubmitting(false);
+    setIsDirty(false);
+    setConfirmDiscard(false);
   }, [initialPurchase, isOpen, settings]);
 
-  // Handle Escape key to close
   useEffect(() => {
-    if (!isOpen) return;
+    if (confirmDiscard) keepEditingRef.current?.focus();
+  }, [confirmDiscard]);
 
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') {
-        onClose();
-      }
-    };
+  // Never lose typed input silently: closing a modified form asks first
+  const requestClose = () => {
+    if (isDirty && !isSubmitting) setConfirmDiscard(true);
+    else onClose();
+  };
 
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isOpen, onClose]);
-
-  // Initial focus trap handling
-  useEffect(() => {
-    if (isOpen) {
-      setTimeout(() => {
-        if (isCustomBrand) {
-          customBrandInputRef.current?.focus();
-        } else {
-          brandSelectRef.current?.focus();
-        }
-      }, 50);
-    }
-  }, [isOpen, isCustomBrand]);
+  const changeQuantity = (q: number) => {
+    setQuantity(q);
+    setIsDirty(true);
+  };
 
   if (!isOpen) return null;
 
@@ -183,22 +176,16 @@ export const AddPurchaseModal: React.FC<AddPurchaseModalProps> = ({
   };
 
   return (
-    <div
-      className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/80 backdrop-blur-sm"
-      role="presentation"
-      onClick={(e) => {
-        if (e.target === e.currentTarget) onClose();
-      }}
+    <Modal
+      isOpen={isOpen}
+      onClose={requestClose}
+      closeOnBackdrop={false}
+      labelledBy="add-purchase-title"
+      describedBy="add-purchase-desc"
+      initialFocusRef={isCustomBrand ? customBrandInputRef : brandSelectRef}
+      overlayClassName="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/80"
+      panelClassName="w-full max-w-lg bg-[#141E34] border border-slate-700/80 rounded-t-3xl sm:rounded-2xl max-h-[92dvh] flex flex-col shadow-2xl overflow-hidden"
     >
-      <div
-        ref={modalRef}
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="add-purchase-title"
-        aria-describedby="add-purchase-desc"
-        className="w-full max-w-lg bg-[#141E34] border border-slate-700/80 rounded-t-3xl sm:rounded-2xl max-h-[92dvh] flex flex-col shadow-2xl overflow-hidden focus:outline-none"
-        dir="rtl"
-      >
         {/* Mobile Drag Handle Affordance */}
         <div className="sm:hidden pt-2.5 pb-1 flex justify-center shrink-0" aria-hidden="true">
           <div className="w-10 h-1 bg-slate-600 rounded-full" />
@@ -215,7 +202,7 @@ export const AddPurchaseModal: React.FC<AddPurchaseModalProps> = ({
             </p>
           </div>
           <button
-            onClick={onClose}
+            onClick={requestClose}
             className="w-10 h-10 rounded-xl bg-slate-800/80 hover:bg-slate-700 text-[#AAB4C5] hover:text-[#F5F7FA] flex items-center justify-center transition-colors min-h-[44px] min-w-[44px] focus-visible:ring-2 focus-visible:ring-[#00E676]"
             aria-label="סגירת חלון"
           >
@@ -224,7 +211,16 @@ export const AddPurchaseModal: React.FC<AddPurchaseModalProps> = ({
         </div>
 
         {/* Scrollable Form Body */}
-        <form onSubmit={handleSubmit} noValidate className="p-5 overflow-y-auto space-y-4 pb-8 sm:pb-5">
+        <form onSubmit={handleSubmit} onInput={() => setIsDirty(true)} noValidate className="p-5 overflow-y-auto space-y-4 pb-8 sm:pb-5">
+          {confirmDiscard && (
+            <div role="alert" className="p-3 bg-amber-500/15 border border-amber-500/40 text-amber-100 text-xs sm:text-sm rounded-xl space-y-2.5">
+              <p className="font-semibold">יש שינויים שלא נשמרו. לסגור בלי לשמור?</p>
+              <div className="flex gap-2">
+                <button type="button" ref={keepEditingRef} onClick={() => setConfirmDiscard(false)} className="flex-1 py-2.5 bg-[#00E676] text-[#080C14] font-bold rounded-lg min-h-[44px]">המשך עריכה</button>
+                <button type="button" onClick={onClose} className="flex-1 py-2.5 bg-slate-800 text-[#F5F7FA] font-semibold rounded-lg min-h-[44px]">סגור בלי לשמור</button>
+              </div>
+            </div>
+          )}
           {errors.form && (
             <div
               role="alert"
@@ -251,7 +247,7 @@ export const AddPurchaseModal: React.FC<AddPurchaseModalProps> = ({
                   aria-describedby={errors.brand ? 'brand-error' : undefined}
                   className={`w-full bg-[#080C14] border ${
                     errors.brand ? 'border-rose-500 ring-1 ring-rose-500' : 'border-slate-700 focus:border-[#00E676]'
-                  } text-[#F5F7FA] text-sm rounded-xl px-3.5 py-3 appearance-none outline-none transition-colors min-h-[44px]`}
+                  } text-[#F5F7FA] text-sm rounded-xl px-3.5 py-3 appearance-none  transition-colors min-h-[44px]`}
                 >
                   {POPULAR_ISRAELI_BRANDS.map((b) => (
                     <option key={b} value={b} className="bg-[#141E34] text-[#F5F7FA]">
@@ -280,7 +276,7 @@ export const AddPurchaseModal: React.FC<AddPurchaseModalProps> = ({
                   aria-describedby={errors.brand ? 'brand-error' : undefined}
                   className={`flex-1 bg-[#080C14] border ${
                     errors.brand ? 'border-rose-500 ring-1 ring-rose-500' : 'border-slate-700 focus:border-[#00E676]'
-                  } text-[#F5F7FA] text-sm rounded-xl px-3.5 py-2.5 outline-none transition-colors min-h-[44px]`}
+                  } text-[#F5F7FA] text-sm rounded-xl px-3.5 py-2.5  transition-colors min-h-[44px]`}
                 />
                 <button
                   type="button"
@@ -326,7 +322,7 @@ export const AddPurchaseModal: React.FC<AddPurchaseModalProps> = ({
                   aria-describedby={errors.pricePerPack ? 'price-error' : undefined}
                   className={`w-full bg-[#080C14] border ${
                     errors.pricePerPack ? 'border-rose-500 ring-1 ring-rose-500' : 'border-slate-700 focus:border-[#00E676]'
-                  } text-[#F5F7FA] text-base font-semibold rounded-xl px-3.5 py-2.5 outline-none transition-colors tabular-nums min-h-[44px]`}
+                  } text-[#F5F7FA] text-base font-semibold rounded-xl px-3.5 py-2.5  transition-colors tabular-nums min-h-[44px]`}
                   placeholder="39"
                 />
                 <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-xs font-bold text-[#AAB4C5] pointer-events-none">
@@ -349,7 +345,7 @@ export const AddPurchaseModal: React.FC<AddPurchaseModalProps> = ({
               <div className="flex items-center gap-2">
                 <button
                   type="button"
-                  onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                  onClick={() => changeQuantity(Math.max(1, quantity - 1))}
                   aria-label="הפחתת חפיסה אחת"
                   className="w-11 h-11 bg-slate-800 hover:bg-slate-700 text-[#F5F7FA] text-lg font-bold rounded-xl flex items-center justify-center transition-colors min-h-[44px] min-w-[44px] focus-visible:ring-2 focus-visible:ring-[#00E676]"
                 >
@@ -371,11 +367,11 @@ export const AddPurchaseModal: React.FC<AddPurchaseModalProps> = ({
                   aria-describedby={errors.quantity ? 'quantity-error' : undefined}
                   className={`flex-1 text-center bg-[#080C14] border ${
                     errors.quantity ? 'border-rose-500 ring-1 ring-rose-500' : 'border-slate-700 focus:border-[#00E676]'
-                  } text-[#F5F7FA] text-base font-bold rounded-xl py-2.5 outline-none tabular-nums min-h-[44px]`}
+                  } text-[#F5F7FA] text-base font-bold rounded-xl py-2.5  tabular-nums min-h-[44px]`}
                 />
                 <button
                   type="button"
-                  onClick={() => setQuantity(Math.min(MAX_QUANTITY, quantity + 1))}
+                  onClick={() => changeQuantity(Math.min(MAX_QUANTITY, quantity + 1))}
                   aria-label="הוספת חפיסה אחת"
                   className="w-11 h-11 bg-slate-800 hover:bg-slate-700 text-[#F5F7FA] text-lg font-bold rounded-xl flex items-center justify-center transition-colors min-h-[44px] min-w-[44px] focus-visible:ring-2 focus-visible:ring-[#00E676]"
                 >
@@ -390,7 +386,7 @@ export const AddPurchaseModal: React.FC<AddPurchaseModalProps> = ({
                     key={q}
                     type="button"
                     onClick={() => {
-                      setQuantity(q);
+                      changeQuantity(q);
                       if (errors.quantity) setErrors((prev) => ({ ...prev, quantity: '' }));
                     }}
                     aria-label={`בחירת ${q === 10 ? 'פקט (10 חפיסות)' : `${q} חפיסות`}`}
@@ -434,7 +430,7 @@ export const AddPurchaseModal: React.FC<AddPurchaseModalProps> = ({
                 aria-describedby={errors.date ? 'date-error' : undefined}
                 className={`w-full bg-[#080C14] border ${
                   errors.date ? 'border-rose-500 ring-1 ring-rose-500' : 'border-slate-700 focus:border-[#00E676]'
-                } text-[#F5F7FA] text-sm rounded-xl px-3.5 py-2.5 outline-none transition-colors min-h-[44px]`}
+                } text-[#F5F7FA] text-sm rounded-xl px-3.5 py-2.5  transition-colors min-h-[44px]`}
               />
               {errors.date && (
                 <p id="date-error" role="alert" className="text-xs text-rose-400 mt-1 flex items-center gap-1 font-medium">
@@ -452,7 +448,10 @@ export const AddPurchaseModal: React.FC<AddPurchaseModalProps> = ({
                 </span>
                 <button
                   type="button"
-                  onClick={() => setTime(getCurrentTimeString())}
+                  onClick={() => {
+                    setTime(getCurrentTimeString());
+                    setIsDirty(true);
+                  }}
                   className="text-xs text-[#00E676] hover:underline font-medium min-h-[30px] flex items-center"
                 >
                   הגדר עכשיו
@@ -463,7 +462,7 @@ export const AddPurchaseModal: React.FC<AddPurchaseModalProps> = ({
                 type="time"
                 value={time}
                 onChange={(e) => setTime(e.target.value)}
-                className="w-full bg-[#080C14] border border-slate-700 focus:border-[#00E676] text-[#F5F7FA] text-sm rounded-xl px-3.5 py-2.5 outline-none transition-colors min-h-[44px]"
+                className="w-full bg-[#080C14] border border-slate-700 focus:border-[#00E676] text-[#F5F7FA] text-sm rounded-xl px-3.5 py-2.5  transition-colors min-h-[44px]"
               />
             </div>
           </div>
@@ -492,7 +491,7 @@ export const AddPurchaseModal: React.FC<AddPurchaseModalProps> = ({
                     placeholder="לדוגמה: קיוסק ליד העבודה, תחנת דלק..."
                     value={location}
                     onChange={(e) => setLocation(e.target.value)}
-                    className="w-full bg-[#080C14] border border-slate-700 focus:border-[#00E676] text-[#F5F7FA] text-sm rounded-xl px-3.5 py-2.5 outline-none transition-colors min-h-[44px]"
+                    className="w-full bg-[#080C14] border border-slate-700 focus:border-[#00E676] text-[#F5F7FA] text-sm rounded-xl px-3.5 py-2.5  transition-colors min-h-[44px]"
                   />
                 </div>
 
@@ -507,7 +506,7 @@ export const AddPurchaseModal: React.FC<AddPurchaseModalProps> = ({
                     placeholder="לדוגמה: נקנה ביציאה עם חברים"
                     value={note}
                     onChange={(e) => setNote(e.target.value)}
-                    className="w-full bg-[#080C14] border border-slate-700 focus:border-[#00E676] text-[#F5F7FA] text-sm rounded-xl px-3.5 py-2.5 outline-none transition-colors min-h-[44px]"
+                    className="w-full bg-[#080C14] border border-slate-700 focus:border-[#00E676] text-[#F5F7FA] text-sm rounded-xl px-3.5 py-2.5  transition-colors min-h-[44px]"
                   />
                 </div>
               </div>
@@ -533,7 +532,7 @@ export const AddPurchaseModal: React.FC<AddPurchaseModalProps> = ({
           <div className="pt-2 flex items-center gap-3">
             <button
               type="button"
-              onClick={onClose}
+              onClick={requestClose}
               disabled={isSubmitting}
               className="flex-1 py-3 px-4 bg-slate-800 hover:bg-slate-700 text-[#F5F7FA] text-xs sm:text-sm font-semibold rounded-xl transition-colors min-h-[48px] focus-visible:ring-2 focus-visible:ring-slate-400"
             >
@@ -558,7 +557,6 @@ export const AddPurchaseModal: React.FC<AddPurchaseModalProps> = ({
             </button>
           </div>
         </form>
-      </div>
-    </div>
+    </Modal>
   );
 };

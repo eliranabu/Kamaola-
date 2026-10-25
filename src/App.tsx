@@ -4,7 +4,7 @@
  */
 
 import React, { useState, useEffect, useMemo, useCallback, Suspense, lazy } from 'react';
-import { Plus, Loader2 } from 'lucide-react';
+import { Loader2 } from 'lucide-react';
 import { Purchase, UserSettings, ActiveTab, ToastNotification } from './types/index.ts';
 import { storage, LoadIssue } from './services/storage.ts';
 import { useNow } from './services/useNow.ts';
@@ -55,14 +55,14 @@ export default function App() {
   const [toasts, setToasts] = useState<ToastNotification[]>([]);
   const [loadIssue, setLoadIssue] = useState<LoadIssue | null>(null);
 
-  // Show accessible Toast feedback
+  // Toast feedback: errors persist until dismissed (ToastContainer handles timing); identical errors are not stacked
   const showToast = useCallback((message: string, type: 'success' | 'error' | 'info' = 'info') => {
     const id = `toast_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`;
-    setToasts((prev) => [...prev, { id, type, message }]);
-
-    setTimeout(() => {
-      setToasts((prev) => prev.filter((t) => t.id !== id));
-    }, 4500);
+    setToasts((prev) =>
+      type === 'error' && prev.some((t) => t.type === 'error' && t.message === message)
+        ? prev
+        : [...prev, { id, type, message }]
+    );
   }, []);
 
   const dismissToast = useCallback((id: string) => {
@@ -292,22 +292,15 @@ export default function App() {
         </Suspense>
       </main>
 
-      {/* Floating Action Button (FAB) on Mobile - Thumb Zone Friendly */}
-      <div className="md:hidden fixed bottom-24 left-4 z-30">
-        <button
-          onClick={() => {
-            setEditingPurchase(null);
-            setIsAddModalOpen(true);
-          }}
-          className="w-14 h-14 rounded-full bg-[#00E676] text-[#080C14] shadow-[0_4px_20px_rgba(0,230,118,0.4)] flex items-center justify-center transition-transform active:scale-95 focus-visible:ring-2 focus-visible:ring-[#00E676] focus-visible:ring-offset-2 focus-visible:ring-offset-[#080C14]"
-          aria-label="הוספת רכישה חדשה"
-        >
-          <Plus className="w-7 h-7 stroke-[2.5]" aria-hidden="true" />
-        </button>
-      </div>
-
       {/* Bottom Navigation for Mobile */}
-      <BottomNav activeTab={activeTab} onTabChange={setActiveTab} />
+      <BottomNav
+        activeTab={activeTab}
+        onTabChange={setActiveTab}
+        onOpenAddModal={() => {
+          setEditingPurchase(null);
+          setIsAddModalOpen(true);
+        }}
+      />
 
       {/* Modals */}
       <AddPurchaseModal
